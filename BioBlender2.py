@@ -1,24 +1,54 @@
+# Blender modules
 import bpy
 from bpy import *
+import bpy.path
+from bpy.path import abspath
+import mathutils
+from mathutils import *
+
+# Python standard modules
 from urllib.parse import urlencode
 from urllib.request import *
 from html.parser import *
 from smtplib import *
 from email.mime.text import MIMEText
-import time, platform, os
+import time
+import platform
+import os
 import codecs
-import bpy.path
-from bpy.path import abspath
 import base64
-import mathutils
-from mathutils import *
 from math import *
 import pickle
 import shutil
 import subprocess
 import sys
+import traceback
 import copy
 
+# ===== Fixes =================
+'''
+
+2015 / feb / 04
+- [added 'append_file_to_current_blend`] use instead of link_append
+- fixed reference to modelList -> tmpModel
+- added pymol.cmd to pyMolPathSearch
+'''
+
+# ===== HELPERS ===============
+
+
+def append_file_to_current_blend(Path, objName, Directory):
+	'''
+	for the time being this will permit older versions of Blender to use the append feature
+	'''
+
+	print('appending file')
+	wm = bpy.ops.wm
+	# if hasattr(wm, 'link_append'):
+	if 'link_append' in dir(wm):
+		wm.link_append(filepath=Path, filename=objName, directory=Directory, link=False)
+	else:
+		wm.append(filepath=Path, filename=objName, directory=Directory)
 
 
 # ==================================================================================================================
@@ -76,13 +106,15 @@ else:
 # Detecting PyMol path
 pyMolPath = ""
 pyMolPathSearch = [
-"%programfiles%\\PyMOL\\PyMOL\\PymolWin.exe",
-"%programfiles%\\DeLano Scientific\\PyMOL Eval\\PymolWin.exe",
-"%programfiles%\\DeLano Scientific\\PyMOL\\PymolWin.exe",
-"%programfiles(x86)%\\PyMOL\\PyMOL\\PymolWin.exe",
-"%programfiles(x86)%\\DeLano Scientific\\PyMOL Eval\\PymolWin.exe",
-"%programfiles(x86)%\\DeLano Scientific\\PyMOL\\PymolWin.exe",
+	"%systemdrive%\\Python27\\Scripts\\pymol.cmd",
+	"%programfiles%\\PyMOL\\PyMOL\\PymolWin.exe",
+	"%programfiles%\\DeLano Scientific\\PyMOL Eval\\PymolWin.exe",
+	"%programfiles%\\DeLano Scientific\\PyMOL\\PymolWin.exe",
+	"%programfiles(x86)%\\PyMOL\\PyMOL\\PymolWin.exe",
+	"%programfiles(x86)%\\DeLano Scientific\\PyMOL Eval\\PymolWin.exe",
+	"%programfiles(x86)%\\DeLano Scientific\\PyMOL\\PymolWin.exe",
 ]
+
 if  ((opSystem == "linux") or (opSystem=="darwin")):
 	pyMolPath = "pymol"
 else:
@@ -268,7 +300,7 @@ def bootstrapping():
 		for objName in elementiDaImportare:
 			Directory = homePath + "data" + os.sep + "EmptySet.blend" + "/" + "Object" + "/"
 			Path = os.sep + os.sep + "data" + os.sep + "EmptySet.blend" + "/" + "Object" + "/" + objName
-			bpy.ops.wm.link_append(filepath = Path, filename = objName, directory = Directory, link = False)
+			append_file_to_current_blend(Path, objName, Directory)
 	except Exception as E:
 		raise Exception ("Problem in import EmptySet.blend: ", E)
 	global bootstrap
@@ -769,10 +801,12 @@ def core_sort_hr():
 		objName = "atom"
 		Directory = homePath + "data" + os.sep + "library.blend" + os.sep + "Object" + os.sep
 		Path = os.sep + os.sep + "data" + os.sep + "library.blend" + os.sep + "Object" + os.sep + objName
-		bpy.ops.wm.link_append(filepath = Path, filename = objName, directory = Directory, link = False)
+		append_file_to_current_blend(Path, objName, Directory)
+
 		bpy.data.objects[objName].name = objName
 		bpy.data.objects[objName].select = True
 		bpy.context.scene.objects.active = bpy.data.objects[objName]
+
 	except Exception as E:
 		raise Exception ("Template atom object cannot be loaded from library: ", E)
 	# Make high res atom model
@@ -945,9 +979,9 @@ def core_createModels():
 							print("TargetKey not set, will skip Rigid Body Joint")
 						else:
 							obj = bpy.data.objects[entry[0]]
-							line=modelList[0][entry[0]]
+							line = tmpModel[entry[0]]
 							obj.location=line.get("loc")
-							line=modelList[0][targetKey]
+							line = tmpModel[targetKey]
 							nextEntry.location=line.get("loc")
 							addRigidBodyRotamer(obj,bpy.data.objects[targetKey])	
 			except Exception as E:
@@ -2897,7 +2931,8 @@ def importEP(path):
 		Directory = homePath + "data" + os.sep + "library.blend" + os.sep + "Object" + os.sep
 		Path = os.sep + os.sep + "data" + os.sep + "library.blend" + os.sep + "Object" + os.sep + "Emitter"
 		objName = "Emitter"
-		bpy.ops.wm.link_append(filepath = Path, filename = objName, directory = Directory, link = False)
+
+		append_file_to_current_blend(Path, objName, Directory)
 		
 		ob = bpy.data.objects["Emitter"]
 		print("EMITTER in ob: " + ob.name)
