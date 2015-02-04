@@ -1,2 +1,4 @@
-__pycache__/BioBlender2.cpython-34.pyc
-__pycache__/__init__.cpython-34.pyc
+__pycache__/
+tmp/
+*.py[cod]
+*.tmp
