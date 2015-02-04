@@ -114,6 +114,7 @@ pyMolPathSearch = [
 	"%programfiles(x86)%\\DeLano Scientific\\PyMOL Eval\\PymolWin.exe",
 	"%programfiles(x86)%\\DeLano Scientific\\PyMOL\\PymolWin.exe",
 ]
+
 if  ((opSystem == "linux") or (opSystem=="darwin")):
 	pyMolPath = "pymol"
 else:
