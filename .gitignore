@@ -1,4 +1,4 @@
 __pycache__/
 tmp/
-*.py[cod]
-*.tmp
+**.py[cod]
+**.tmp
