@@ -838,11 +838,19 @@ def core_createModels():
 	id = bpy.context.scene.BBModelRemark
 	curFrame = 1
 	# Build 3D scene from pdbIDmodelsDictionary
+
+	# pdbID references a specific model.
+	# that model's dict it returned by pdbIDmodelsDictionary[pdbID]
+	# m is the key, into that model's dictionary it will return a conformation of that model
+	# the keys are unsorted.
 	for m in pdbIDmodelsDictionary[pdbID]:
+		print(m)
 		model = (pdbIDmodelsDictionary[pdbID])[m]
+
 		# Prova: se il dizionario-model in esame e' vuoto, saltalo (non e' stato selezionato il relativo model nella lista)
 		if not (model):
 			continue
+		
 		# =======
 		# reset
 		bpy.ops.object.select_all(action="DESELECT")
@@ -850,6 +858,7 @@ def core_createModels():
 			o.select = False
 		bpy.context.scene.objects.active = None
 		bpy.context.scene.frame_set(curFrame)
+
 		# on first model, Place atoms in scene
 		if curFrame == 1:
 			modelCopy = model.copy()
@@ -994,6 +1003,7 @@ def core_createModels():
 				OBJ.location = line.get("loc")
 		except Exception as E:
 				raise Exception ("Unable to place 3D atoms:", E)
+		
 		if len(pdbIDmodelsDictionary[pdbID]) != 1:
 			# insert keyframe for animations
 			try:
@@ -2873,31 +2883,39 @@ def importEP(path):
 	scene = bpy.context.scene
 	pts = []
 	objList = []
+
+	# DEBUG
+	print('DEBUG:', path)
+
 	# read the file once to generate curves
 	with open(path,"r") as file:
 		for file_line in file:
 			line=file_line.split()
 			if line[0]=="n":
 				if curveCount !=0:
+
 					# for every n encountered creates a new curve
 					cu = bpy.data.curves.new("Curve%3d"%curveCount, "CURVE")
 					ob = bpy.data.objects.new("CurveObj%3d"%curveCount, cu)
-					bpy.context.scene.objects.link(ob)
-					bpy.context.scene.objects.active = ob
+					scene.objects.link(ob)
+					scene.objects.active = ob
+
 					# set all the properties of the curve
 					spline = cu.splines.new("NURBS")
 					cu.dimensions = "3D"
 					cu.use_path = True
 					cu.resolution_u = 1
-					spline.points.add(len(pts)//4-1)
+					spline.points.add(len(pts)//4-1)   # minus 1 because of the 1 default .co
 					spline.points.foreach_set('co', pts)
 					spline.use_endpoint_u = True
 					ob.field.type="GUIDE"
 					ob.field.use_max_distance=True
 					ob.field.distance_max=0.05
+
 					# objList keeps a list of all EP related objects for easy deletion
 					objList.append(ob)
 					pts = []
+
 				curveCount += 1
 			elif line[0]=="v":
 				pts.append(float(line[1]))
