@@ -13,7 +13,7 @@ Also, as BioBlender is supposed to handle different types of molecules, we will 
   - Single protein, multiple conformations File: "01_CaM_protein3conformations.pdb";
   - Double strand DNA fragment  File  "02_4IHV_dsDNA.pdb";
   - Glycoprotein (protein with sugar-like molcule attached) file "05_glycoprotein_4AY9_FSH.pdb";
-  - Phospholipid, file 06_ "Plipid-pdb";
+  - Small protein for testing GE. File "06_1L2Y_4GE.pdb";
   - Composite protein (dimer), file: "04_Dimer_1A4U.pdb";
   - Interacting protein/DNA, file "03_3IV5_ProteinComplex.pdb".
 
