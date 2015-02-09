@@ -131,7 +131,6 @@ else:
 			if os.path.exists(ExpandEnvironmentStrings(i)):
 				pyPath = ExpandEnvironmentStrings(i)
 				break
-				
 
 
 # ==================================================================================================================
