@@ -2909,7 +2909,14 @@ def importEP(path):
 					spline.use_endpoint_u = True
 					ob.field.type="GUIDE"
 					ob.field.use_max_distance=True
-					ob.field.distance_max=0.05
+
+					# each emitter vertex is dedicated a curve object,
+					# however some emitter vertices exist very close to eachother, 
+					# these adjusted settings are intended to constrain the search field significantly,
+					# the hope is that this will prevent most mixed up trajectories. as evidenced
+					# https://github.com/MonZop/BioBlender/issues/20
+					ob.field.guide_minimum = 0.0008   # originally 0.8
+					ob.field.distance_max = 0.0008   # originally 0.05
 
 					# objList keeps a list of all EP related objects for easy deletion
 					objList.append(ob)
