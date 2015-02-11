@@ -619,7 +619,7 @@ class PDBString(str):
 	# insert data into a 80 column pdb string
 	def set(self,loc,prop):
 		# insert prop into self[loc], but not changing the length of the string
-		newStr = self[0:loc] + str(prop) + self[loc+len(str(prop)):]
+		newStr = self[0:loc] + str(prop) + self[loc + len(str(prop)):]
 		return PDBString(newStr)
 
 
