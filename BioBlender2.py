@@ -588,6 +588,7 @@ def pdbdotorg(id):
 
 class PDBString(str):
 	print("PDB String")
+
 	# Parses PDB line using column attribute
 	# file definition is taken from www.wwpdb.org/documentation/format32/sect9.html
 	# The function tries to be smart by striping out whitespaces
@@ -606,13 +607,15 @@ class PDBString(str):
 			y = float(self[38:46])
 			z = float(self[46:54])
 			return [x,y,z]
-			#return [float(coord) for coord in self[30:54].split()]        if property == "occupancy": return self[54:60].strip()
+
+		# if property == "occupancy": return self[54:60].strip()
 		if property == "tempFactor": return self[60:66].strip()
 		if property == "element": return self[76:78].strip()
 		if property == "charge": return self[78:80].strip()
 		if property == "modelID": return int(self[6:20].strip())
 		# if no match found:
 		return None
+
 	# insert data into a 80 column pdb string
 	def set(self,loc,prop):
 		# insert prop into self[loc], but not changing the length of the string
@@ -692,25 +695,30 @@ def core_parsePDB(filePath):
 			line = line.replace("\r", "")
 			line = PDBString(line)
 			tag = line.get("tag")
+
 			# if tag is tmpPDBmodelDictionary, load tmpPDBmodelDictionary id
 			if tag == "MODEL":
 				tmpPDBmodelID = line.get("modelID")
+
 			# if tag is ATOM, load column data (skip this if tmpPDBmodelID is not in list of models)
 			elif (tmpPDBmodelID in tmpPDBmodelImportOrder) and (tag == "ATOM" or tag == "HETATM"):
 				# check for element type
 				atomName = line.get("name")
 				elementName = line.get("element")
-				elementTypeResidue=line.get("aminoName").strip()
-				atomtype=line.get("tag")
+				elementTypeResidue = line.get("aminoName").strip()   # issue, why the extra strip()?
+				atomtype = line.get("tag")
+
 				# skip water
 				if line.get("aminoName") == "HOH":
 					continue
+
 				# decide if hydrogen should be skipped
 				if not bpy.context.scene.BBImportHydrogen and elementName == H:
 					continue
 				# decide if current Chain should be skipped
 				if (line.get("chainID") not in importChainOrderList):
 					continue
+
 				tmpPDBobjectName = bpy.context.scene.BBModelRemark
 				key = str(tmpPDBobjectName) + "#" + line.get("serial").rjust(5, "0")
 				tmpPDBmodelDictionary[key] = line		
@@ -730,6 +738,7 @@ def core_parsePDB(filePath):
 				if elementName != H and (elementTypeResidue in elementTypeNucleic) and atomtype=="ATOM":
 					chainCache_Nucleic[key] = line.get("aminoName") + "#" + line.get("chainSeq") + "#" + line.get("name") + "#" + line.get("chainID") + "#" + line.get("element")
 				# To multi-pdb: insert caches above in global chain caches dictionaries, using pdbID as key:
+
 			# when the end of a tmpPDBmodelDictionary is reached, add the tmpPDBmodelDictionary dictionary to the list
 			if tag == "ENDMDL" or tag=="END" or tag == "MODEL" and (tmpPDBmodelID in tmpPDBmodelImportOrder):
 				# We add a new MODEL entry to the global pdbIDmodelsDictionary[pdbID],
@@ -737,6 +746,7 @@ def core_parsePDB(filePath):
 				(pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID] = tmpPDBmodelDictionary
 				# So now pdbIDmodelsDictionary[pdbID] is a Dictionary: model-dict; the second dict is [atomName]-BBInfo
 				tmpPDBmodelDictionary = {}
+
 	mainChainCacheDict[pdbID] = mainChainCache
 	mainChainCache_NucleicDict[pdbID] = mainChainCache_Nucleic
 	mainChainCache_Nucleic_FilteredDict[pdbID] = mainChainCache_Nucleic_Filtered
@@ -848,6 +858,7 @@ def core_createModels():
 
 		# Prova: se il dizionario-model in esame e' vuoto, saltalo (non e' stato selezionato il relativo model nella lista)
 		if not (model):
+			print('key:', m, ' - doesn\'t appear to have stored a conformation')
 			continue
 		
 		# =======
