@@ -817,7 +817,7 @@ def core_createModels():
 	curFrame = 1
 	# Build 3D scene from pdbIDmodelsDictionary
 
-	DEBUG = True
+	DEBUG = False
 	
 	# write the dict to disc for debug
 	if DEBUG:
