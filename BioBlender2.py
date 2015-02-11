@@ -716,7 +716,14 @@ def core_parsePDB(filePath):
 			if tag == "ENDMDL" or tag=="END" or tag == "MODEL" and (tmpPDBmodelID in tmpPDBmodelImportOrder):
 				# We add a new MODEL entry to the global pdbIDmodelsDictionary[pdbID],
 				# based on the current MODEL ID, and we assign the tmpPDBmodelDictionary to this entry.
-				(pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID] = tmpPDBmodelDictionary.copy()
+
+				if not (tag == 'END'):
+					(pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID] = tmpPDBmodelDictionary
+
+				''' f test '''
+				f = (pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID]
+				print('tmpPDBmodelID', tmpPDBmodelID, ':', len(f))
+
 				# So now pdbIDmodelsDictionary[pdbID] is a Dictionary: model-dict; the second dict is [atomName]-BBInfo
 				tmpPDBmodelDictionary = {}
 
