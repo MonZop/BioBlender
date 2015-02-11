@@ -696,10 +696,14 @@ def core_parsePDB(filePath):
 					if key not in mainChainCache: mainChainCache.append(key)
 				if atomName in NucleicAtoms:
 					if atomName in NucleicAtoms_Filtered:
-						if key not in mainChainCache_Nucleic_Filtered: mainChainCache_Nucleic_Filtered.append(key)
+						if key not in mainChainCache_Nucleic_Filtered:
+							mainChainCache_Nucleic_Filtered.append(key)
 					else:
-						if key not in mainChainCache_Nucleic: mainChainCache_Nucleic.append(key)
-					if atomName =="C3'": mainChainCache_Nucleic.append(key)
+						if key not in mainChainCache_Nucleic:
+							mainChainCache_Nucleic.append(key)
+					if atomName =="C3'":
+						mainChainCache_Nucleic.append(key)
+
 				# add all atom data to dictionary for building bonds
 				elementTypeNucleic=["D","A","U","G","C","DC","DG","DA","DT"]
 				if elementName != H and (not elementTypeResidue in elementTypeNucleic ) and atomtype=="ATOM":
@@ -712,7 +716,7 @@ def core_parsePDB(filePath):
 			if tag == "ENDMDL" or tag=="END" or tag == "MODEL" and (tmpPDBmodelID in tmpPDBmodelImportOrder):
 				# We add a new MODEL entry to the global pdbIDmodelsDictionary[pdbID],
 				# based on the current MODEL ID, and we assign the tmpPDBmodelDictionary to this entry.
-				(pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID] = tmpPDBmodelDictionary
+				(pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID] = tmpPDBmodelDictionary.copy()
 				# So now pdbIDmodelsDictionary[pdbID] is a Dictionary: model-dict; the second dict is [atomName]-BBInfo
 				tmpPDBmodelDictionary = {}
 
@@ -818,7 +822,7 @@ def core_createModels():
 	# Build 3D scene from pdbIDmodelsDictionary
 
 	DEBUG = False
-	
+
 	# write the dict to disc for debug
 	if DEBUG:
 		import json
