@@ -633,6 +633,7 @@ def core_parsePDB(filePath):
 	global importChainOrderList
 	importChainOrderList = []
 	importChainOrderList = [tmpCOLI for tmpCOLI in bpy.context.scene.BBImportChainOrder.split(',')]
+	print('importChainOrderList', importChainOrderList)
 	
 	# 2013-06-28 ---  Removes "1+" and "1-"... hoping it will not affect "standard" files...
 	try:
@@ -671,23 +672,25 @@ def core_parsePDB(filePath):
 				# check for element type
 				atomName = line.get("name")
 				elementName = line.get("element")
-				elementTypeResidue = line.get("aminoName").strip()   # issue, why the extra strip()?
+				elementTypeResidue = line.get("aminoName")
 				atomtype = line.get("tag")
 
 				# skip water
-				if line.get("aminoName") == "HOH":
+				if elementTypeResidue == "HOH":
 					continue
 
 				# decide if hydrogen should be skipped
 				if not bpy.context.scene.BBImportHydrogen and elementName == H:
 					continue
+
 				# decide if current Chain should be skipped
 				if (line.get("chainID") not in importChainOrderList):
 					continue
 
 				tmpPDBobjectName = bpy.context.scene.BBModelRemark
 				key = str(tmpPDBobjectName) + "#" + line.get("serial").rjust(5, "0")
-				tmpPDBmodelDictionary[key] = line		
+				tmpPDBmodelDictionary[key] = line
+
 				# add mchain atom data to dictionary for building bonds
 				if atomName==N or atomName==C or (atomName==CA and elementName!=CA):
 					if key not in mainChainCache: mainChainCache.append(key)
@@ -813,6 +816,17 @@ def core_createModels():
 	id = bpy.context.scene.BBModelRemark
 	curFrame = 1
 	# Build 3D scene from pdbIDmodelsDictionary
+
+	DEBUG = True
+	
+	# write the dict to disc for debug
+	if DEBUG:
+		import json
+		this_root = os.path.dirname(__file__)
+		destination_path = os.path.join(this_root, 'tmp', 'PDB_tree.json')
+		m = json.dumps(pdbIDmodelsDictionary, sort_keys=True, indent=2)
+		with open(destination_path, 'w') as PDB_tree:
+			PDB_tree.writelines(m)
 
 	# pdbID references a specific model.
 	# that model's dict it returned by pdbIDmodelsDictionary[pdbID]
