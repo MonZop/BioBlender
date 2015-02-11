@@ -467,7 +467,7 @@ bpy.utils.register_class(bb2_operator_import)
 def getNumModel():
 	try:
 		tmpPDBmodelsList = [int(tmpPDBmodelsBBio) for tmpPDBmodelsBBio in bpy.context.scene.BBImportOrder.split(',')]
-		print("get_num_model: " + str(tmpPDBmodelsList))
+		print("getNumModel() => " + str(tmpPDBmodelsList))
 		return len(tmpPDBmodelsList)
 	except:
 		return -1
