@@ -26,10 +26,12 @@ import traceback
 import copy
 
 # BioBlender Tables and Utils
-from BioBlender.table_values_fi import values_fi
+from BioBlender.table_values import (
+	values_fi, 
+	molecules_structure	 # Define animoacids structure
+)
 
-
-# ===== Fixes =================
+# ===== Fixes & Mods =================
 '''
 
 2015 / feb / 04
@@ -217,12 +219,6 @@ color={C:[0.1,0.1,0.1], CA:[0.4,1.0,0.14], N:[0.24,0.41,0.7], O:[0.46,0.1,0.1], 
 
 
 dic_lipo_materials={}
-
-
-#Define animoacids structure
-molecules_structure = {'ALA': ['CB','C','CA','O','N','H','HA','HB1','HB2','HB3','H1','H2','H3','OXT'],'ARG': ['C','CA','CB','CD','CG','CZ','N','NE','NH1','NH2','O','H','HA','HB2','HB3','HG2','HG3','HD2','HD3','HE','HH11','HH12','HH21','HH22','1HH1','2HH1','1HH2','2HH2','H1','H2','H3','OXT'],'ASN': ['C','CA','CB','CG','N','ND2','O','OD1','H','HA','HB2','HB3','HD21','HD22','1HD2','2HD2','H1','H2','H3','OXT'],'ASP': ['C','CA','CB','CG','N','O','OD1','OD2','H','HA','HB2','HB3','H1','H2','H3','OXT'],'CYS': ['C','CA','CB','N','O','SG','H','HA','HB2','HB3','H1','H2','H3','OXT'],'GLN': ['C','CA','CB','CD','CG','N','NE2','O','OE1','H','HA','HB2','HB3','HG2','HG3','HE21','HE22','1HE2','2HE2','H1','H2','H3','OXT'],'GLU': ['C','CA','CB','CD','CG','N','O','OE1','OE2','H','HA','HB2','HB3','HG2','HG3','H1','H2','H3','OXT'],'GLY': ['C','CA','O','N','H','HA','HA2','HA3','H1','H2','H3','OXT'],'HIS': ['C','CA','CB','CD2','CE1','CG','N','ND1','NE2','O','H','HA','HB2','HB3','HD1','HD2','HE1','H1','H2','H3','OXT'],'ILE': ['C','CA','CB','CD','CD1','CG1','CG2','N','O','H','HA','HB','HG12','HG13','HG21','HG22','HG23','HD11','HD12','HD13','2HG1','3HG1','1HG2','2HG2','3HG2','1HD1','2HD1','3HD1','H1','H2','H3','OXT'],'LEU': ['C','CA','CB','CD1','CD2','CG','N','O','H','HA','HB2','HB3','HG','HD11','HD12','HD13','HD21','HD22','HD23','1HD1','2HD1','3HD1','1HD1','2HD2','3HD2','H1','H2','H3','OXT'],'LYS': ['C','CA','CB','CD','CE','CG','N','NZ','O','H','HA','HB2','HB3','HG2','HG3','HD2','HD3','HE2','HE3','HZ1','HZ2','HZ3','H1','H2','H3','OXT'],'MET': ['C','CA','CB','CE','CG','N','O','SD','H','HA','HB2','HB3','HG2','HG3','HE1','HE2','HE3','H1','H2','H3','OXT'],'PHE': ['C','CA','CB','CD1','CD2','CE1','CE2','CG','CZ','N','O','H','HA','HB2','HB3','HD1','HD2','HE1','HE2','HZ','H1','H2','H3','OXT'],'PRO': ['C','CA','CB','CD','CG','N','O','HA','HB2','HB3','HG2','HG3','HD2','HD3','H1','H2','H3','OXT'],'SER': ['C','CA','CB','N','O','OG','H','HA','HB2','HB3','HG','H1','H2','H3','OXT'],'THR': ['C','CA','CB','CG2','N','O','OG1','H','HA','HB','HG1','HG21','HG22','HG23','1HG2','2HG2','3HG2','H1','H2','H3','OXT'],'TRP':['C','CA','CB','CD1','CD2','CE2','CE3','CG','CH2','CZ2','CZ3','N','NE1','O','H','HA','HB2','HB3','HE1','HD1','HE3','HZ2','HZ3','HH2','H1','H2','H3','OXT'],'TYR': ['C','CA','CB','CD1','CD2','CE1','CE2','CG','CZ','N','O','OH','H','HA','HB2','HB3','HD1','HD2','HE1','HE2','HH','H1','H2','H3','OXT'],'VAL': ['C','CA','CB','CG1','CG2','N','O','H','HA','HB','HG11','HG12','HG13','HG21','HG22','HG23','1HG1','2HG1','3HG1','1HG2','2HG2','3HG2','H1','H2','H3','OXT'],'CA': ['CA'],'NAG': ['C1','C2','C3','C4','C5','C6','C7','C8','O1','O2','O3','O4','O5','O6','O7','N2','H2','HN2'], 'NDG': ['C1','C2','C3','C4','C5','C6','C7','C8','O1L','O3','O4','O','O6','O7','N2'], 'BMA': ['C1','C2','C3','C4','C5','C6','O1','O2','O3','O4','O5','O6'],'MAN': ['C1','C2','C3','C4','C5','C6','O1','O2','O3','O4','O5','O6'],'GAL': ['C1','C2','C3','C4','C5','C6','O1','O2','O3','O4','O5','O6'],'NAN': ['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','O1A','O1B','O2','O4','O6','O7','O8','O9','O10','N5','NH5'],'DG': ['P','O1P','O1P',"O5'","C5'","C4'","O4'","C1'","C2'","C3'","O3'",'N9','C8','N7','C5','C6','O6','N1','C2','N2','N3','C4'],'DA': ['P','O1P','O1P',"O5'","C5'","C4'","O4'","C1'","C2'","C3'","O3'",'N9','C8','N7','C5','C6','N6','N1','C2','N2','N3','C4'],'DC': ['P','O1P','O1P',"O5'","C5'","C4'","O4'","C1'","C2'","C3'","O3'",'N1','C2','O2','N3','C4','N4','C5','C6'],'DT': ['P','O1P','O1P',"O5'","C5'","C4'","O4'","C1'","C2'","C3'","O3'",'N1','C2','O2','N3','C4','O4','C5','C6','C7'],'G': ['P','O1P','O1P',"O5'","C5'","C4'","O4'","C1'","C2'","O2'","C3'","O3'",'N9','C8','N7','C5','C6','O6','N1','C2','N2','N3','C4'],'A': ['P','O1P','O1P',"O5'","C5'","C4'","O4'","C1'","C2'","O2'","C3'","O3'",'N9','C8','N7','C5','C6','N6','N1','C2','N2','N3','C4'],'C': ['P','O1P','O1P',"O5'","C5'","C4'","O4'","C1'","C2'","O2'","C3'","O3'",'N1','C2','O2','N3','C4','N4','C5','C6'],'U': ['P','O1P','O1P',"O5'","C5'","C4'","O4'","C1'","C2'","O2'","C3'","O3'",'N1','C2','O2','N3','C4','O4','C5','C6']}
-
-
 
 
 # Define atom scales [visual Van der Waals scale, collision radius scale]
