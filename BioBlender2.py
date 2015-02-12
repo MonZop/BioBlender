@@ -642,6 +642,7 @@ def core_parsePDB(filePath):
 		print(s)
 
 	print("A")
+
 	# open file (assuming input is valid)
 	with open(filePath,"r") as file:
 		for line in file:
@@ -706,6 +707,16 @@ def core_parsePDB(filePath):
 
 				if not (tag == 'END'):
 					(pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID] = tmpPDBmodelDictionary
+				else:
+					# ugly test: run through the file again and 
+					# look at the last 2 lines.
+					# if the current tag is END and the last 2 lines are
+					# TER, END. then the format is all ATOMs and no MODEL.
+					with open(filePath,"r") as sfile:
+						lines = [l[:3] for l in sfile if l.strip()][-2:]
+						lines = '|'.join(lines)
+						if lines in {'TER|END', 'MAS|END'}:
+							(pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID] = tmpPDBmodelDictionary
 
 				''' f test '''
 				f = (pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID]
@@ -713,6 +724,8 @@ def core_parsePDB(filePath):
 
 				# So now pdbIDmodelsDictionary[pdbID] is a Dictionary: model-dict; the second dict is [atomName]-BBInfo
 				tmpPDBmodelDictionary = {}
+
+			PREVIOUS = tag
 
 	mainChainCacheDict[pdbID] = mainChainCache
 	mainChainCache_NucleicDict[pdbID] = mainChainCache_Nucleic
