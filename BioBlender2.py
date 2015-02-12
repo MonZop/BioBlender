@@ -26,7 +26,7 @@ import traceback
 import copy
 
 # BioBlender Tables and Utils
-from BioBlender.table_values import (
+from .table_values import (
 	values_fi, 
 	molecules_structure	 # Define animoacids structure
 )
