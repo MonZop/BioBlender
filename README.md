@@ -3,9 +3,9 @@ It consists of several functions, some executed by Blender and/or its Game Engin
 
 It was developed by the Scientific Visualization Unit of the Institute of Cliniclal Physiology of the CNR of Italy in Pisa, with the contribution of several colleagues.
 
-We have now made it an Open Project, with the intent of keeping it updated, as long as Blender keeps moving on, and of possibly introducing new, better and useful features. 
+We have now made it an Open Project, with the intent of keeping it updated, as long as Blender keeps moving on, and of possibly introducing new, better and useful features.
 
-More info can be found on the SciVis website (www.scivis.it) and on BioBlender.eu 
+More info can be found on the SciVis website (www.scivis.it) and on BioBlender.eu
 
 BioBlender was developed to work on Windows, Mac and Linux. Therefore each fix will need to be tested on each of these platforms.
 Also, as BioBlender is supposed to handle different types of molecules, we will test:
@@ -18,3 +18,65 @@ Also, as BioBlender is supposed to handle different types of molecules, we will 
   - Interacting protein/DNA, file "03_3IV5_ProteinComplex.pdb".
 
 The SciVis Team is grateful to all that will contribute to this project.
+
+Getting Started
+---------------
+**BioBlender is still under development**
+
+# Prerequisites #
+- [Blender](http://www.blender.org/)
+- [Python 2.7](https://www.python.org/downloads/)
+- [PyMol](http://sourceforge.net/projects/pymol/?source=directory)
+
+#Using the command line#
+This set up will allow you to update dynamically to the latest snapshot of BioBlender. You need to be able to use the command line and have git properly set up.
+## Unix/Mac ##
+1. Get the latest version
+   ```bash
+   mkdir ~/BioBlender
+   git clone https://github.com/MonZop/BioBlender.git ~/BioBlender
+   ln -s ~/BioBlender ~/.config/blender/%BLENDER_VERSION_NUM%/scripts/addons/BioBlender
+   ```
+
+2. Checkout whichever branch you need. If you're not sure, skip this step.
+   ```bash
+   cd ~/BioBlender
+   git checkout remotes/origin/BRANCH_NAME
+   ```
+
+3. Launch Blender and do File-->User Preferences-->Addons
+
+4. Search the list for BioBlender2.0 and make sure it is ticked
+
+5. Save user settings and restart blender
+
+6. To update
+   ```bash
+   cd ~/BioBlender
+   git pull --all
+   ```
+
+## Windows 7 and above ##
+1. Get the latest version of BioBlender
+Assuming you only have one partition C:. If not, just replace with your drive's letter (D, E, etc).
+    ```dos
+    mkdir C:\some\directory\BioBlender
+    git clone https://github.com/MonZop/BioBlender.git C:\some\directory\BioBlender
+    mklnk \d "C:\Users\%username%\AppData\Roaming\Blender Foundation\Blender\%BLENDER_VERSION_NUM%\scripts\addons\BioBlender" C:\some\directory\BioBlender
+    ```
+2. Checkout whichever branch you need. If you're not sure, skip this step.
+   ```dos
+   cd C:\some\directory\BioBlender
+   git checkout remotes/origin/BRANCH_NAME
+   ```
+3. Launch Blender and do File-->User Preferences-->Addons
+
+4. Search the list for BioBlender2.0 and make sure it is ticked
+
+5. Save user settings and restart blender
+
+6. To update
+   ```dos
+   cd C:\some\directory\BioBlender
+   git pull --all
+   ```
