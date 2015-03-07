@@ -19,8 +19,6 @@ Also, as BioBlender is supposed to handle different types of molecules, we will 
 
 The SciVis Team is grateful to all that will contribute to this project.
 
----
-
 #Getting Started#
 **BioBlender is still under development**
 
