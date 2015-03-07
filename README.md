@@ -56,8 +56,8 @@ This set up will allow you to update dynamically to the latest snapshot of BioBl
    ```
 
 ### Windows 7 and above ###
-1. Get the latest version of BioBlender
-Assuming you only have one partition C:. If not, just replace with your drive's letter (D, E, etc).
+1. Get the latest version of BioBlender.
+    Assuming you only have one partition C:. If not, just replace with your drive's letter (D, E, etc).
 
     ```dos
     mkdir C:\some\directory\BioBlender
@@ -65,6 +65,7 @@ Assuming you only have one partition C:. If not, just replace with your drive's 
     mklnk \d "C:\Users\%username%\AppData\Roaming\Blender Foundation\Blender\%BLENDER_VERSION_NUM%\scripts\addons\BioBlender" C:\some\directory\BioBlender
     ```
 2. Checkout whichever branch you need. If you're not sure, skip this step.
+
    ```dos
    cd C:\some\directory\BioBlender
    git checkout remotes/origin/BRANCH_NAME
