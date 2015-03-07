@@ -19,18 +19,19 @@ Also, as BioBlender is supposed to handle different types of molecules, we will 
 
 The SciVis Team is grateful to all that will contribute to this project.
 
-Getting Started
----------------
+---
+
+#Getting Started#
 **BioBlender is still under development**
 
-# Prerequisites #
+## Prerequisites ##
 - [Blender](http://www.blender.org/)
 - [Python 2.7](https://www.python.org/downloads/)
 - [PyMol](http://sourceforge.net/projects/pymol/?source=directory)
 
-#Using the command line#
+##Using the command line##
 This set up will allow you to update dynamically to the latest snapshot of BioBlender. You need to be able to use the command line and have git properly set up.
-## Unix/Mac ##
+### Unix/Mac ###
 1. Get the latest version
    ```bash
    mkdir ~/BioBlender
@@ -56,9 +57,10 @@ This set up will allow you to update dynamically to the latest snapshot of BioBl
    git pull --all
    ```
 
-## Windows 7 and above ##
+### Windows 7 and above ###
 1. Get the latest version of BioBlender
 Assuming you only have one partition C:. If not, just replace with your drive's letter (D, E, etc).
+
     ```dos
     mkdir C:\some\directory\BioBlender
     git clone https://github.com/MonZop/BioBlender.git C:\some\directory\BioBlender
