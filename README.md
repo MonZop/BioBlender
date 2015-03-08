@@ -55,15 +55,17 @@ This set up will allow you to update dynamically to the latest snapshot of BioBl
    git pull --all
    ```
 
-### Windows 7 and above ###
+### Windows Vista and above ###
 1. Get the latest version of BioBlender.
     Assuming you only have one partition C:. If not, just replace with your drive's letter (D, E, etc).
 
     ```dos
     mkdir C:\some\directory\BioBlender
     git clone https://github.com/MonZop/BioBlender.git C:\some\directory\BioBlender
-    mklnk \d "C:\Users\%username%\AppData\Roaming\Blender Foundation\Blender\%BLENDER_VERSION_NUM%\scripts\addons\BioBlender" C:\some\directory\BioBlender
+    mklnk /d "C:\Users\%username%\AppData\Roaming\Blender Foundation\Blender\%BLENDER_VERSION_NUM%\scripts\addons\BioBlender" C:\some\directory\BioBlender
     ```
+    The ```mklink``` step will work with ```/d``` or ```/j```, both ```/d``` and ```/j``` are good options, of the two /j requires no elevated user privileges so if ```/d``` fails, then use ```/j```
+
 2. Checkout whichever branch you need. If you're not sure, skip this step.
 
    ```dos
