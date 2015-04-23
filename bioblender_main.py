@@ -4,7 +4,7 @@ for license see LICENSE.txt
 
 '''
 
-from .file_append_utils import file_append
+from .file_utils import file_append
 from .tables import (
     color,
     values_fi,
