@@ -12,6 +12,9 @@ from .tables import (
     scale_vdw, scale_cov,
     NucleicAtoms, NucleicAtoms_Filtered)
 
+from .ui_panels import ImportDisposablePDB
+
+
 C = "C"
 N = "N"
 O = "O"
@@ -29,4 +32,28 @@ CL = "CL"
 MN = "MN"
 F = "F"
 
-print(NucleicAtoms_Filtered)
+
+def register():
+    # register operators first
+    # ---
+    # --
+    # -
+
+    # then register the UI for those operators
+    bpy.utils.register_class(ImportDisposablePDB)
+    # ---
+    # --
+    # -
+
+
+def unregister():
+    # unregister UI
+    bpy.utils.unregister_class(ImportDisposablePDB)
+    # ---
+    # --
+    # -
+
+    # unregister operators.
+    # ---
+    # --
+    # -
