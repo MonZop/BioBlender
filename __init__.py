@@ -26,12 +26,17 @@ if 'bpy' in globals():
     if 'bioblender_main' in globals():
         import imp
         imp.reload(bioblender_main)
-        imp.reload(file_append_utils)
+        imp.reload(utils)
+        imp.reload(operator_lite_pdb_import)
+        imp.reload(func_lite_pdb_import)
+
         print('reloaded modules')
 else:
     import bpy
     from . import bioblender_main
-    from . import file_append_utils
+    from . import utils
+    from . import operator_lite_pdb_import
+    from . import func_lite_pdb_import
 
 
 def register():

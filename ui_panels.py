@@ -13,3 +13,4 @@ class ImportDisposablePDB(bpy.types.Panel):
         l = self.layout
         row = l.row()
         row.label(text='junk here')
+        row.operator('scene.import_pdb_lite')

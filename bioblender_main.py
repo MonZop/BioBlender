@@ -4,7 +4,7 @@ for license see LICENSE.txt
 
 '''
 
-from .file_utils import file_append
+from .utils import file_append
 from .tables import (
     color,
     values_fi,
@@ -34,6 +34,10 @@ F = "F"
 
 
 def register():
+    # register any scene props
+    # ....
+    # ...
+
     # register operators first
     # ---
     # --
@@ -57,3 +61,7 @@ def unregister():
     # ---
     # --
     # -
+
+    # del any scene props
+    # ....
+    # ...
