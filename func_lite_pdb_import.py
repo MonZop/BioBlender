@@ -58,6 +58,13 @@ def create_icospehere(subdiv, d):
     return v, e, p
 
 
+def set_autosmooth(obj):
+    mesh = obj.data
+    smooth_states = [True] * len(mesh.polygons)
+    mesh.polygons.foreach_set('use_smooth', smooth_states)
+    mesh.update()
+
+
 def add_empty(basename, coordinate, kind='PLAIN_AXES'):
     empty = bpy.data.objects.new('MT_' + basename, None)
     empty.location = coordinate
@@ -69,61 +76,69 @@ def add_empty(basename, coordinate, kind='PLAIN_AXES'):
     return empty
 
 
-def generate_meshes_from(atom_dict, pdb_name):
-
-    ''' Aliases and variables and constants '''
-
+def generate_parent(scn, atom_type, verts):
     meshes = bpy.data.meshes
     objects = bpy.data.objects
-    scene = bpy.context.scene
+
+    # every atom of certain type goes into the same mesh
+    mesh = meshes.new('atoms_' + atom_type)
+    mesh.from_pydata(verts, [], [])
+    mesh.update()
+
+    # create an object to assign the mesh data to
+    obj = objects.new('atoms_' + atom_type, mesh)
+    scn.objects.link(obj)
+    return obj
+
+
+def generate_child(scn, atom_type):
+    meshes = bpy.data.meshes
+    objects = bpy.data.objects
+
+    # create a donor mesh (child) to represent each of these atoms
+    # this mesh is duplicated onto each vertex of the atoms_* parent mesh
+    diameter = scale_cov[atom_type][0] * scalex  # unified
+    verts, edges, faces = create_icospehere(2, diameter)
+    mesh = meshes.new('repr_atom_' + atom_type)
+    mesh.from_pydata(verts, [], faces)
+    mesh.update()
+
+    # child must be an object too
+    obj_child_repr = objects.new('repr_atoms_' + atom_type, mesh)
+    scn.objects.link(obj_child_repr)
+    set_autosmooth(obj_child_repr)
+    return obj_child_repr
+
+
+def set_child_material(atom_type, obj_child_repr):
+    # make material and assign to child as active material.
+    mat = bpy.data.materials.new('bb_material_' + atom_type)
+    mat.use_nodes = True
+    mat.use_fake_user = True  # usually handy
+    obj_child_repr.active_material = mat
+
+    # set the diffuse color for the node-based material
+    atom_color = color[atom_type] + [1.0]
+    node = mat.node_tree.nodes['Diffuse BSDF']
+    node.inputs[0].default_value = atom_color
+
+
+def generate_meshes_from(atom_dict, pdb_name):
+    scn = bpy.context.scene
+
+    # all atom clouds of this pdb are parented to this Empty
     mt = add_empty(pdb_name, (0, 0, 0))
 
     for atom_type, verts in atom_dict.items():
 
-        ''' parent '''
-        # generate a new mesh, ever atom of certain type goes into the same
-        # mesh
-        mesh = meshes.new('atoms_' + atom_type)
-        mesh.from_pydata(verts, [], [])
-        mesh.update()
-
-        # create an object to assign the mesh data to
-        obj = objects.new('atoms_' + atom_type, mesh)
-        scene.objects.link(obj)
+        # make the cloud, set duplication to Vertices
+        obj = generate_parent(scn, atom_type, verts)
         obj.parent = mt
-
-        ''' child '''
-        # create a donor mesh (child) to represent each of these atoms
-        # this mesh is duplicated onto each vertex of the atoms_* parent mesh
-        diameter = scale_cov[atom_type][0] * scalex  # unified
-        verts, edges, faces = create_icospehere(2, diameter)
-        mesh = meshes.new('repr_atom_' + atom_type)
-        mesh.from_pydata(verts, [], faces)
-        mesh.update()
-
-        # child must be an object too
-        obj_child_repr = objects.new('repr_atoms_' + atom_type, mesh)
-        scene.objects.link(obj_child_repr)
-
-        # make material and assign to child as active material.
-        mat = bpy.data.materials.new('bb_material_' + atom_type)
-        mat.use_nodes = True
-        mat.use_fake_user = True  # usually handy
-        obj_child_repr.active_material = mat
-
-        # set the diffuse color for the node-based material
-        atom_color = color[atom_type] + [1.0]
-        node = mat.node_tree.nodes['Diffuse BSDF']
-        node.inputs[0].default_value = atom_color
-
-        # attach the child to the parent object's vertices
         obj.dupli_type = 'VERTS'
+
+        # generate the atom representation for this kind of atom
+        # assign the material, and make it show on the vertices
+        # of the cloud by setting parent to the cloud obj
+        obj_child_repr = generate_child(scn, atom_type)
         obj_child_repr.parent = obj
-
-        def set_autosmooth(obj):
-            mesh = obj.data
-            smooth_states = [True] * len(mesh.polygons)
-            mesh.polygons.foreach_set('use_smooth', smooth_states)
-            mesh.update()
-
-        set_autosmooth(obj_child_repr)
+        set_child_material(atom_type, obj_child_repr)
