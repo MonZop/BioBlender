@@ -124,21 +124,30 @@ def set_child_material(atom_type, obj_child_repr):
 
 
 def generate_meshes_from(atom_dict, pdb_name):
+    '''
+    : makes an Empty called mt
+        - parent of all atom clouds of this pdb
+
+    : obj
+        - the cloud used to store all atoms of one kind
+        - set duplication to Vertices so it can take
+          obj_child on each vertex.
+
+    : obj_child
+        - the atom representation for this atom_type
+        - has material unique this atom_type
+    '''
+
     scn = bpy.context.scene
 
-    # all atom clouds of this pdb are parented to this Empty
     mt = add_empty(pdb_name, (0, 0, 0))
 
     for atom_type, verts in atom_dict.items():
 
-        # make the cloud, set duplication to Vertices
         obj = generate_parent(scn, atom_type, verts)
         obj.parent = mt
         obj.dupli_type = 'VERTS'
 
-        # generate the atom representation for this kind of atom
-        # assign the material, and make it show on the vertices
-        # of the cloud by setting parent to the cloud obj
         obj_child_repr = generate_child(scn, atom_type)
         obj_child_repr.parent = obj
         set_child_material(atom_type, obj_child_repr)
