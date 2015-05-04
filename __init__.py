@@ -21,6 +21,8 @@ the only path is to close/reopen Blender.
 
 '''
 
+import sys
+
 if 'bpy' in globals():
     print(__package__, 'detected reload event')
     if 'bioblender_main' in globals():
@@ -63,8 +65,49 @@ else:
 
 
 def register():
+    from bpy.props import (StringProperty, EnumProperty)
+
+    bpy.types.Object.BBInfo = StringProperty()
+    bpy.types.Object.bb2_pdbID = StringProperty()
+    bpy.types.Object.bb2_objectType = StringProperty()
+    bpy.types.Object.bb2_subID = StringProperty()
+    bpy.types.Object.bb2_pdbPath = StringProperty()
+    bpy.types.Object.bb2_outputOptions = EnumProperty(
+        name="bb2_outputoptions", default="1",
+        items=[
+            ("0", "Main", ""), ("1", "+Side", ""), ("2", "+Hyd", ""),
+            ("3", "Surface", ""), ("4", "MLP Main", ""), ("5", "MLP +Side", ""),
+            ("6", "MLP +Hyd", ""), ("7", "MLP Surface", "")])
+
+    opSystem = utils.detect_os()
+    homePath = utils.get_homepath()
+    print(opSystem, '\n', homePath)
+
+    bpy.types.Scene.bb25_opSystem = StringProperty(default=opSystem)
+    bpy.types.Scene.bb25_homepath = StringProperty(attr='bb25_homepath', default=homePath)
+    bpy.types.Scene.bb25_blenderPath = StringProperty(default=str(sys.executable))
+
+    pyPath, pyMolPath = utils.get_pyPath_pyMolPath(opSystem)
+    bpy.types.Scene.bb25_pyPath = StringProperty(default=pyPath)
+    bpy.types.Scene.bb25_pyMolPath = StringProperty(default=pyMolPath)
+
     bpy.utils.register_module(__name__)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
+
+    # del any scene props
+    Obj = bpy.types.Object
+    Scn = bpy.types.Scene
+    del Obj.BBInfo
+    del Obj.bb2_pdbID
+    del Obj.bb2_objectType
+    del Obj.bb2_subID
+    del Obj.bb2_pdbPath
+    del Obj.bb2_outputOptions
+    del Scn.bb25_opSystem
+    del Scn.bb25_homepath
+    del Scn.bb25_blenderPath
+    del Scn.bb25_pyPath
+    del Scn.bb25_pyMolPath

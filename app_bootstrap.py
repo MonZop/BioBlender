@@ -1,4 +1,5 @@
 import bpy
+import os
 
 from .tables import (
     color,
@@ -7,13 +8,17 @@ from .tables import (
     scale_vdw, scale_cov,
     NucleicAtoms, NucleicAtoms_Filtered)
 
+from .app_storage import dic_lipo_materials
 
-def bootstrapping():
+
+def bootstrapping(context):
     print("Bootstrapping")
 
     # aliases
-    scene = bpy.context.scene
+    scene = context.scene
+    print(dir(scene))
     materials = bpy.data.materials
+    homePath = scene.bb25_homepath
 
     C = "C"
     N = "N"
@@ -86,7 +91,9 @@ def getNewPDBid():
 
 def create_fi_materials():
     print("create_fi_materials")
+
     global dic_lipo_materials
+
     materials = bpy.data.materials
 
     try:

@@ -1,7 +1,7 @@
 import bpy
 from bpy import (types, props)
 
-from .utils import PDBString
+from .utils import (PDBString, file_append)
 from .app_bootstrap import bootstrapping
 # from .tables import (
 #     color,
@@ -76,7 +76,7 @@ class bb2_operator_make_preview(types.Operator):
     def invoke(self, context, event):
         try:
             if bootstrap == -1:
-                bootstrapping()
+                bootstrapping(context)
 
             global importReady
             importReady = False
