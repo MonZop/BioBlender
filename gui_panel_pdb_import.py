@@ -65,6 +65,7 @@ class BB2_GUI_PDB_IMPORT(bpy.types.Panel):
         row = layout.row()
         row.scale_y = 2
         if importReady:
+            # row.operator_context = 'INVOKE_REGION_WIN'
             row.operator("ops.bb2_operator_import")
         else:
             row.active = False
@@ -79,7 +80,7 @@ class bb2_operator_make_preview(types.Operator):
     def invoke(self, context, event):
         try:
             if bootstrap == -1:
-                bootstrapping() #context)
+                bootstrapping()  # context)
 
             global importReady
             importReady = False
