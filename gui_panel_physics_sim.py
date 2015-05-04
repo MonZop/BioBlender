@@ -61,7 +61,6 @@ class bb2_operator_interactive(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_interactive)
 
 
 class bb2_operator_ge_refresh(types.Operator):
@@ -81,7 +80,6 @@ class bb2_operator_ge_refresh(types.Operator):
             except Exception as E:
                 str7 = str(E)   # Do nothing...
         return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_ge_refresh)
 
 
 def geStart():

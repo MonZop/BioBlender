@@ -62,7 +62,6 @@ class bb2_operator_export_pdb(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_export_pdb)
 
 
 def trueSphereOrigin(object):

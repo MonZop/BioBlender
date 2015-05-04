@@ -61,7 +61,6 @@ class bb2_operator_movie_refresh(types.Operator):
             except Exception as E:
                 print("An error occured in bb2_operator_movie_refresh:" + str(E))
         return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_movie_refresh)
 
 
 class bb2_operator_anim(types.Operator):
@@ -80,7 +79,6 @@ class bb2_operator_anim(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_anim)
 
 
 def exportMovie():

@@ -79,7 +79,6 @@ class bb2_view_panel_update(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-bpy.utils.register_class(bb2_view_panel_update)
 
 
 # depending on view mode, selectively hide certain object based on atom definition

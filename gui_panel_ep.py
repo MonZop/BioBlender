@@ -60,7 +60,6 @@ class bb2_operator_ep(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_ep)
 
 
 class bb2_operator_ep_clear(types.Operator):
@@ -80,7 +79,6 @@ class bb2_operator_ep_clear(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_ep_clear)
 
 
 # delete EP related objects

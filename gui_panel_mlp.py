@@ -71,7 +71,6 @@ class bb2_operator_atomic_mlp(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_atomic_mlp)
 
 
 def atomicMLP(MLPcolor, tID):
@@ -138,7 +137,6 @@ class bb2_operator_mlp(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_mlp)
 
 
 class bb2_operator_mlp_render(types.Operator):
@@ -171,7 +169,6 @@ class bb2_operator_mlp_render(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-bpy.utils.register_class(bb2_operator_mlp_render)
 
 
 # do MLP visualization

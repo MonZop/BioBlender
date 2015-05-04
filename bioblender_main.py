@@ -11,7 +11,8 @@ from .utils import (
     file_append,
     detect_os,
     get_homepath,
-    get_pyPath_pyMolPath)
+    get_pyPath_pyMolPath,
+    PDBString)
 
 from .tables import (
     color,
@@ -20,29 +21,72 @@ from .tables import (
     scale_vdw, scale_cov,
     NucleicAtoms, NucleicAtoms_Filtered)
 
-from .ui_panels import ImportDisposablePDB
+# from .ui_panels import ImportDisposablePDB
+from .gui_panel_pdb_import import (
+    BB2_GUI_PDB_IMPORT,
+    bb2_operator_make_preview,
+    bb2_operator_import)
+
+from .gui_panel_view import (
+    BB2_PANEL_VIEW, bb2_view_panel_update)
+
+from .gui_panel_physics_sim import (
+    BB2_PHYSICS_SIM_PANEL,
+    bb2_operator_interactive,
+    bb2_operator_ge_refresh)
+
+from .gui_panel_ep import (
+    BB2_EP_PANEL,
+    bb2_operator_ep,
+    bb2_operator_ep_clear)
+
+from .gui_panel_mlp import (
+    BB2_MLP_PANEL,
+    bb2_operator_atomic_mlp,
+    bb2_operator_mlp,
+    bb2_operator_mlp_render)
+
+from .gui_panel_output_animation import (
+    BB2_OUTPUT_PANEL,
+    bb2_operator_movie_refresh,
+    bb2_operator_anim)
+
+from .gui_panel_pdb_output import (
+    BB2_PDB_OUTPUT_PANEL, bb2_operator_export_pdb)
 
 
-C = "C"
-N = "N"
-O = "O"
-S = "S"
-H = "H"
-CA = "CA"
-P = "P"
-FE = "FE"
-MG = "MG"
-ZN = "ZN"
-CU = "CU"
-NA = "NA"
-K = "K"
-CL = "CL"
-MN = "MN"
-F = "F"
+BIOBLENDER_CLASSES = [
+    bb2_operator_make_preview,
+    bb2_operator_import,
+    BB2_GUI_PDB_IMPORT,
+    #
+    bb2_view_panel_update,
+    BB2_PANEL_VIEW,
+    #
+    bb2_operator_interactive,
+    bb2_operator_ge_refresh,
+    BB2_PHYSICS_SIM_PANEL,
+    #
+    bb2_operator_ep,
+    bb2_operator_ep_clear,
+    BB2_EP_PANEL,
+    #
+    bb2_operator_atomic_mlp,
+    bb2_operator_mlp,
+    bb2_operator_mlp_render,
+    BB2_MLP_PANEL,
+    #
+    bb2_operator_movie_refresh,
+    bb2_operator_anim,
+    BB2_OUTPUT_PANEL,
+    #
+    bb2_operator_export_pdb,
+    BB2_PDB_OUTPUT_PANEL
+]
 
 
 def register():
-    # register any scene, obj props
+    # register any scene and obj props.
     Obj = bpy.types.Object
     Scn = bpy.types.Scene
 
@@ -67,29 +111,14 @@ def register():
     Scn.bb25_pyPath = StringProperty(default=pyPath)
     Scn.bb25_pyMolPath = StringProperty(default=pyMolPath)
 
-    # register operators first
-    # ---
-    # --
-    # -
-
-    # then register the UI for those operators
-    bpy.utils.register_class(ImportDisposablePDB)
-    # ---
-    # --
-    # -
+    # register operators first, then the panel.
+    for cls in BIOBLENDER_CLASSES:
+        bpy.utils.register_class(cls)
 
 
 def unregister():
-    # unregister UI
-    bpy.utils.unregister_class(ImportDisposablePDB)
-    # ---
-    # --
-    # -
-
-    # unregister operators.
-    # ---
-    # --
-    # -
+    for cls in reversed(BIOBLENDER_CLASSES):
+        bpy.utils.register_class(cls)
 
     # del any scene props
     Obj = bpy.types.Object

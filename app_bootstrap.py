@@ -1,8 +1,6 @@
 import bpy
 
-from .tables import (
-    color,
-    values_fi)
+from .tables import (color, values_fi)
 
 
 def bootstrapping():
