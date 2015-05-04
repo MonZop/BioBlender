@@ -3,19 +3,18 @@ import bpy
 
 
 def file_append(Path, objName, Directory):
-    '''permit older versions of Blender to use the append feature'''
-    print('attempting to append file')
+    '''
+    for the time being this will permit older
+    versions of Blender to use the append feature
+    '''
 
+    print('appending file')
     wm = bpy.ops.wm
-    params = dict(filepath=Path, filename=objName, directory=Directory)
-
-    if not ('link_append' in dir(wm)):
-        wm.append(*params)
+    # if hasattr(wm, 'link_append'):
+    if 'link_append' in dir(wm):
+        wm.link_append(filepath=Path, filename=objName, directory=Directory, link=False)
     else:
-        params['link'] = None
-        wm.link_append(*params)
-
-    print('appended', Path)
+        wm.append(filepath=Path, filename=objName, directory=Directory)
 
 
 def detect_os():

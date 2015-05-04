@@ -9,6 +9,7 @@ from .tables import (
     NucleicAtoms, NucleicAtoms_Filtered)
 
 from .app_storage import dic_lipo_materials
+from .utils import (PDBString, file_append)
 
 
 def bootstrapping(context):
@@ -16,7 +17,6 @@ def bootstrapping(context):
 
     # aliases
     scene = context.scene
-    print(dir(scene))
     materials = bpy.data.materials
     homePath = scene.bb25_homepath
 
