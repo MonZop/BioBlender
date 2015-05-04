@@ -1,3 +1,4 @@
+import os
 import bpy
 
 
@@ -15,3 +16,15 @@ def file_append(Path, objName, Directory):
         wm.link_append(*params)
 
     print('appended', Path)
+
+
+def detect_os():
+    opSystem = ""
+    if os.sys.platform == "linux":
+        opSystem = "linux"
+    elif os.sys.platform == "darwin":
+        opSystem = "darwin"
+    else:
+        opSystem = "win"
+
+    return opSystem    

@@ -3,8 +3,11 @@ bioblender_main.py
 for license see LICENSE.txt
 
 '''
+import os
 
-from .utils import file_append
+from bpy.props import (StringProperty, EnumProperty)
+
+from .utils import (file_append, detect_os)
 from .tables import (
     color,
     values_fi,
@@ -34,9 +37,20 @@ F = "F"
 
 
 def register():
-    # register any scene props
-    # ....
-    # ...
+    # register any scene, obj props
+    Obj = bpy.types.Object
+    Obj.BBInfo = StringProperty()
+    Obj.bb2_pdbID = StringProperty()
+    Obj.bb2_objectType = StringProperty()
+    Obj.bb2_subID = StringProperty()
+    Obj.bb2_pdbPath = StringProperty()
+    Obj.bb2_outputOptions = EnumProperty(
+        name="bb2_outputoptions", default="1",
+        items=[
+            ("0", "Main", ""), ("1", "+Side", ""), ("2", "+Hyd", ""),
+            ("3", "Surface", ""), ("4", "MLP Main", ""), ("5", "MLP +Side", ""),
+            ("6", "MLP +Hyd", ""), ("7", "MLP Surface", "")])
+    Obj.bb25_opSystem = StringProperty(default=detect_os())
 
     # register operators first
     # ---
@@ -63,5 +77,11 @@ def unregister():
     # -
 
     # del any scene props
-    # ....
-    # ...
+    Obj = bpy.types.Object
+    del Obj.BBInfo
+    del Obj.bb2_pdbID
+    del Obj.bb2_objectType
+    del Obj.bb2_subID
+    del Obj.bb2_pdbPath
+    del Obj.bb2_outputOptions
+    del Obj.bb25_opSystem
