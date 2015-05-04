@@ -5,13 +5,28 @@ from bpy import (types, props)
 from bpy.path import abspath
 
 from .utils import (PDBString, file_append)
-from .app_bootstrap import bootstrapping
-# from .tables import (
-#     color,
-#     values_fi,
-#     molecules_structure,
-#     scale_vdw, scale_cov,
-#     NucleicAtoms, NucleicAtoms_Filtered)
+from .app_bootstrap import (
+    bootstrapping,
+    C, N, O, S, H, CA, P, FE, MG, ZN, CU, NA, K, CL, MN, F
+)
+
+from .app_storage import (
+    pdbIDmodelsDictionary,
+    mainChainCacheDict,
+    mainChainCache_NucleicDict,
+    mainChainCache_Nucleic_FilteredDict,
+    chainCacheDict,
+    chainCache_NucleicDict,
+    pdbIDmodelsDictionary,
+    pdbID
+)
+
+from .tables import (
+    color,
+    values_fi,
+    molecules_structure,
+    scale_vdw, scale_cov,
+    NucleicAtoms, NucleicAtoms_Filtered)
 
 importReady = False
 bootstrap = -1
@@ -405,6 +420,9 @@ def core_parseTXT(filePath):
 
 
 def core_sort_hr():
+    scene = bpy.context.scene
+    homePath = scene.bb25_homepath
+
     print("core_sort_hr")
     # ======= IMPORT ON SELECTED LAYER = START =======================
     selectedLayer = 0

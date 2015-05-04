@@ -11,6 +11,23 @@ from .tables import (
 from .app_storage import dic_lipo_materials
 from .utils import (PDBString, file_append)
 
+C = "C"
+N = "N"
+O = "O"
+S = "S"
+H = "H"
+CA = "CA"
+P = "P"
+FE = "FE"
+MG = "MG"
+ZN = "ZN"
+CU = "CU"
+NA = "NA"
+K = "K"
+CL = "CL"
+MN = "MN"
+F = "F"
+
 
 def bootstrapping():  # context):
     print("Bootstrapping")
@@ -19,23 +36,6 @@ def bootstrapping():  # context):
     scene = bpy.context.scene
     materials = bpy.data.materials
     homePath = scene.bb25_homepath
-
-    C = "C"
-    N = "N"
-    O = "O"
-    S = "S"
-    H = "H"
-    CA = "CA"
-    P = "P"
-    FE = "FE"
-    MG = "MG"
-    ZN = "ZN"
-    CU = "CU"
-    NA = "NA"
-    K = "K"
-    CL = "CL"
-    MN = "MN"
-    F = "F"
 
     elencoMateriali = [CA, H, N, O, S, ZN, P, FE, MG, MN, CU, NA, K, CL, F]
 
