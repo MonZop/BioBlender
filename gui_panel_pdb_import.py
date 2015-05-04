@@ -1,5 +1,11 @@
+import os
+import copy
+
 import bpy
 from bpy import (types, props)
+
+import mathutils
+from mathutils import Vector, Matrix
 
 # import bpy.path
 from bpy.path import abspath
