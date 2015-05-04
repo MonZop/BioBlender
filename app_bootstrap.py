@@ -1,6 +1,11 @@
 import bpy
 
-from .tables import (color, values_fi)
+from .tables import (
+    color,
+    values_fi,
+    molecules_structure,
+    scale_vdw, scale_cov,
+    NucleicAtoms, NucleicAtoms_Filtered)
 
 
 def bootstrapping():

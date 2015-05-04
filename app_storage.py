@@ -1,8 +1,6 @@
 import bpy
 
 
-bootstrap = -1
-
 # Generic BB2 "Global" variables
 curFrame = 1
 filePath = ""

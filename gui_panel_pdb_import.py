@@ -2,8 +2,16 @@ import bpy
 from bpy import (types, props)
 
 from .utils import PDBString
+from .app_bootstrap import bootstrapping
+# from .tables import (
+#     color,
+#     values_fi,
+#     molecules_structure,
+#     scale_vdw, scale_cov,
+#     NucleicAtoms, NucleicAtoms_Filtered)
 
 importReady = False
+bootstrap = -1
 
 
 class BB2_GUI_PDB_IMPORT(bpy.types.Panel):
@@ -69,6 +77,7 @@ class bb2_operator_make_preview(types.Operator):
         try:
             if bootstrap == -1:
                 bootstrapping()
+
             global importReady
             importReady = False
             bpy.context.scene.BBImportFeedback = ""

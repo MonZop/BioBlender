@@ -14,12 +14,12 @@ from .utils import (
     get_homepath,
     get_pyPath_pyMolPath)
 
-from .tables import (
-    color,
-    values_fi,
-    molecules_structure,
-    scale_vdw, scale_cov,
-    NucleicAtoms, NucleicAtoms_Filtered)
+# from .tables import (
+#     color,
+#     values_fi,
+#     molecules_structure,
+#     scale_vdw, scale_cov,
+#     NucleicAtoms, NucleicAtoms_Filtered)
 
 # from .ui_panels import ImportDisposablePDB
 from .gui_panel_pdb_import import (

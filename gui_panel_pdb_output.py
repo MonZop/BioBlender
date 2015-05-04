@@ -1,3 +1,7 @@
+import bpy
+from bpy import (types, props)
+
+
 class BB2_PDB_OUTPUT_PANEL(types.Panel):
     bl_label = "BioBlender2 PDB Output"
     bl_idname = "BB2_PDB_OUTPUT_PANEL"

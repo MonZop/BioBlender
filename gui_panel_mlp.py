@@ -1,3 +1,7 @@
+import bpy
+from bpy import (types, props)
+
+
 class BB2_MLP_PANEL(types.Panel):
     bl_label = "BioBlender2 MLP Visualization"
     bl_idname = "BB2_MLP_PANEL"
