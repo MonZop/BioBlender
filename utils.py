@@ -1,4 +1,6 @@
+import sys
 import os
+
 import bpy
 
 
@@ -7,14 +9,22 @@ def file_append(Path, objName, Directory):
     for the time being this will permit older
     versions of Blender to use the append feature
     '''
+    # stored_type = bpy.context.area.type
 
-    print('appending file')
-    wm = bpy.ops.wm
-    # if hasattr(wm, 'link_append'):
-    if 'link_append' in dir(wm):
-        wm.link_append(filepath=Path, filename=objName, directory=Directory, link=False)
-    else:
-        wm.append(filepath=Path, filename=objName, directory=Directory)
+    try:
+        print('appending file')
+        # bpy.context.area.type = 'FILE_BROWSER'
+        wm = bpy.ops.wm
+
+        if 'link_append' in dir(wm):
+            wm.link_append(filepath=Path, filename=objName, directory=Directory, link=False)
+        else:
+            wm.append(filepath=Path, filename=objName, directory=Directory)
+
+    except Exception as err:
+        sys.stderr.write('ERROR: %s\n' % str(err))
+
+    # bpy.context.area.type = stored_type
 
 
 def detect_os():

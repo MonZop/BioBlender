@@ -12,11 +12,11 @@ from .app_storage import dic_lipo_materials
 from .utils import (PDBString, file_append)
 
 
-def bootstrapping(context):
+def bootstrapping():  # context):
     print("Bootstrapping")
 
     # aliases
-    scene = context.scene
+    scene = bpy.context.scene
     materials = bpy.data.materials
     homePath = scene.bb25_homepath
 
