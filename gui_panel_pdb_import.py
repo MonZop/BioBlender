@@ -381,9 +381,12 @@ def core_parsePDB(filePath):
             if tag == "ENDMDL" or tag == "END" or tag == "MODEL" and (tmpPDBmodelID in tmpPDBmodelImportOrder):
                 # We add a new MODEL entry to the global pdbIDmodelsDictionary[pdbID],
                 # based on the current MODEL ID, and we assign the tmpPDBmodelDictionary to this entry.
-                (pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID] = tmpPDBmodelDictionary
+                if tmpPDBmodelDictionary:
+                    # don't push an empty tmpPDBmodelDictionary onto pdbIDmodelsDictionary.
+                    (pdbIDmodelsDictionary[pdbID])[tmpPDBmodelID] = tmpPDBmodelDictionary
                 # So now pdbIDmodelsDictionary[pdbID] is a Dictionary: model-dict; the second dict is [atomName]-BBInfo
                 tmpPDBmodelDictionary = {}
+
     mainChainCacheDict[pdbID] = mainChainCache
     mainChainCache_NucleicDict[pdbID] = mainChainCache_Nucleic
     mainChainCache_Nucleic_FilteredDict[pdbID] = mainChainCache_Nucleic_Filtered
