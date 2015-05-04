@@ -132,7 +132,9 @@ def create_fi_materials():
                     bpy.data.materials['C'].copy()
                     valuecolor = value_fi_returned
                     bpy.data.materials['C.001'].name = "matlipo_" + str(valuecolor)
-                    bpy.data.materials["matlipo_" + str(valuecolor)].diffuse_color = [float(valuecolor), float(valuecolor), float(valuecolor)]
+
+                    v = float(valuecolor)
+                    bpy.data.materials["matlipo_" + str(valuecolor)].diffuse_color = [v, v, v]
                     dic_lipo_materials[str(valuecolor)] = "matlipo_" + str(valuecolor)
     except Exception as E:
         raise Exception("Unable to create lipo materials", E)
@@ -156,6 +158,5 @@ def retrieve_fi_materials(am_name, at_name):
     material_name = dic_lipo_materials[material_value]
     return material_name
 
-# ==================================================================================================================
 
 
