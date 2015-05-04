@@ -16,12 +16,11 @@ scalez = 0.12
 
 
 def import_pdb(filepath):
-
     atom_dict = defaultdict(list)
 
-    def inspect_line_by_line(pdb_file):
+    with open(filepath) as pdb_file:
+
         for line in pdb_file:
-            # protein data line: pdl
             pdl = line.strip()
             if not pdl.startswith('ATOM'):
                 continue
@@ -32,11 +31,6 @@ def import_pdb(filepath):
             atom_type = values[-1]
             atom_dict[atom_type].append(xyz)
 
-    def pdb_import_intermediate():
-        with open(filepath) as pdb_file:
-            inspect_line_by_line(pdb_file)
-
-    pdb_import_intermediate()
     return atom_dict
 
 
