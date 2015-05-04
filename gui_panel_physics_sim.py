@@ -1,3 +1,6 @@
+import bpy
+from bpy import (types, props)
+
 geList = []
 
 

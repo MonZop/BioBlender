@@ -1,4 +1,5 @@
 import bpy
+from bpy import (types, props)
 
 from .utils import PDBString
 
@@ -12,15 +13,16 @@ class BB2_GUI_PDB_IMPORT(bpy.types.Panel):
     bl_region_type = "WINDOW"
     bl_context = "scene"
     bl_options = {'DEFAULT_CLOSED'}
-    bpy.types.Scene.BBDeltaFrame = bpy.props.IntProperty(attr="BBDeltaFrame", name="Keyframe Interval", description="The number of in-between frames between each model for animation", default=100, min=1, max=200, soft_min=5, soft_max=50)
-    bpy.types.Scene.BBLayerImport = bpy.props.BoolVectorProperty(attr="BBLayerImport", size=20, subtype='LAYER', name="Import on Layer", description="Import on Layer")
-    bpy.types.Scene.BBImportPath = bpy.props.StringProperty(attr="BBImportPath", description="", default="", subtype="FILE_PATH")
-    bpy.types.Scene.BBModelRemark = bpy.props.StringProperty(attr="BBModelRemark", description="Model name tag for multiple imports", default="protein0")
-    bpy.types.Scene.BBImportFeedback = bpy.props.StringProperty(attr="BBImportFeedback", description="Import Feedback", default="")
-    bpy.types.Scene.BBImportChain = bpy.props.StringProperty(attr="BBImportChain", description="Import Chain", default="")
-    bpy.types.Scene.BBImportChainOrder = bpy.props.StringProperty(attr="BBImportChainOrder", description="List of chains to be imported", default="")
-    bpy.types.Scene.BBImportOrder = bpy.props.StringProperty(attr="BBImportOrder", description="List of models to be imported", default="")
-    bpy.types.Scene.BBImportHydrogen = bpy.props.BoolProperty(attr="BBImportHydrogen", name="Import Hydrogen", description="Import hydrogen atoms (Slower)", default=False)
+
+    types.Scene.BBDeltaFrame = props.IntProperty(attr="BBDeltaFrame", name="Keyframe Interval", description="The number of in-between frames between each model for animation", default=100, min=1, max=200, soft_min=5, soft_max=50)
+    types.Scene.BBLayerImport = props.BoolVectorProperty(attr="BBLayerImport", size=20, subtype='LAYER', name="Import on Layer", description="Import on Layer")
+    types.Scene.BBImportPath = props.StringProperty(attr="BBImportPath", description="", default="", subtype="FILE_PATH")
+    types.Scene.BBModelRemark = props.StringProperty(attr="BBModelRemark", description="Model name tag for multiple imports", default="protein0")
+    types.Scene.BBImportFeedback = props.StringProperty(attr="BBImportFeedback", description="Import Feedback", default="")
+    types.Scene.BBImportChain = props.StringProperty(attr="BBImportChain", description="Import Chain", default="")
+    types.Scene.BBImportChainOrder = props.StringProperty(attr="BBImportChainOrder", description="List of chains to be imported", default="")
+    types.Scene.BBImportOrder = props.StringProperty(attr="BBImportOrder", description="List of models to be imported", default="")
+    types.Scene.BBImportHydrogen = props.BoolProperty(attr="BBImportHydrogen", name="Import Hydrogen", description="Import hydrogen atoms (Slower)", default=False)
 
     def draw(self, context):
         layout = self.layout

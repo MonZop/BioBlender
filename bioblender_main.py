@@ -4,6 +4,7 @@ for license see LICENSE.txt
 
 '''
 import sys
+import bpy
 
 from bpy.props import (StringProperty, EnumProperty)
 
@@ -11,8 +12,7 @@ from .utils import (
     file_append,
     detect_os,
     get_homepath,
-    get_pyPath_pyMolPath,
-    PDBString)
+    get_pyPath_pyMolPath)
 
 from .tables import (
     color,

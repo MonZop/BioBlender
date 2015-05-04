@@ -1,3 +1,7 @@
+import bpy
+from bpy import (types, props)
+
+
 currentActiveObj = ""
 oldActiveObj = ""
 activeModelRemark = ""
@@ -183,6 +187,8 @@ def updateView(residue=None, verbose=False):
 
 def setup(verbose=False, clear=True, setupPDBid=0):
     # PDB Path is retrieved from parent EMPTY
+    homePath = bpy.context.scene.bb25_homepath
+
     pE = None
     for o1 in bpy.context.scene.objects:
         try:
@@ -247,7 +253,12 @@ def setup(verbose=False, clear=True, setupPDBid=0):
 
 
 # export scene to PDB file; if no path is specified, it writes to tmp.pdb
-def exportPDB(path=homePath + "tmp" + os.sep + "tmp.pdb", tag=None, verbose=False, sPid=None):
+def exportPDB(path=None, tag=None, verbose=False, sPid=None):
+    homePath = bpy.context.scene.bb25_homepath
+
+    if not path:
+        path = homePath + "tmp" + os.sep + "tmp.pdb"
+
     print("=============== exporting PDB")
     print("Exporting model '%s' to %s" % (tag, path))
 

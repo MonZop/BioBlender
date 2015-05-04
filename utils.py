@@ -77,3 +77,52 @@ def get_pyPath_pyMolPath(opSystem):
                     break
 
     return pyPath, pyMolPath
+
+
+class PDBString(str):
+    print("PDB String")
+    # Parses PDB line using column attribute
+    # file definition is taken from www.wwpdb.org/documentation/format32/sect9.html
+    # The function tries to be smart by striping out whitespaces
+    # and converts certain properties to list
+
+    def get(self, property):
+        if property == "tag":
+            return self[0:6].strip()
+        if property == "serial":
+            return self[6:11].strip()
+        if property == "name":
+            return self[12:16].strip()
+        if property == "altLoc":
+            return self[16:17].strip()
+        if property == "aminoName":
+            return self[17:20].strip()
+        if property == "chainID":
+            return self[21:22].strip()
+        if property == "chainSeq":
+            return self[22:26].strip()
+        if property == "iCode":
+            return self[26:27].strip()
+        if property == "loc":
+            x = float(self[29:38])
+            y = float(self[38:46])
+            z = float(self[46:54])
+            # return [float(coord) for coord in self[30:54].split()]
+            return [x, y, z]
+        # if property == "occupancy": return self[54:60].strip()
+        if property == "tempFactor":
+            return self[60:66].strip()
+        if property == "element":
+            return self[76:78].strip()
+        if property == "charge":
+            return self[78:80].strip()
+        if property == "modelID":
+            return int(self[6:20].strip())
+        # if no match found:
+        return None
+
+    # insert data into a 80 column pdb string
+    def set(self, loc, prop):
+        # insert prop into self[loc], but not changing the length of the string
+        newStr = self[0:loc] + str(prop) + self[loc + len(str(prop)):]
+        return PDBString(newStr)
