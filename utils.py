@@ -27,4 +27,4 @@ def detect_os():
     else:
         opSystem = "win"
 
-    return opSystem    
+    return opSystem
