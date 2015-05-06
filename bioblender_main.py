@@ -2,14 +2,17 @@
 bioblender_main.py
 for license see LICENSE.txt
 
+am using import * because __all__ is defined explicitely in the modules.
+
 '''
 
 import bpy
 
 
-from .gui_panel_pdb_import import (
-    BB2_GUI_PDB_IMPORT,
-    bb2_operator_make_preview, bb2_operator_import)
+# from .gui_panel_pdb_import import (
+#     BB2_GUI_PDB_IMPORT,
+#     bb2_operator_make_preview, bb2_operator_import)
+from .gui_panel_pdb_import import *
 
 from .gui_panel_view import (
     BB2_PANEL_VIEW, bb2_view_panel_update)
@@ -35,6 +38,7 @@ from .gui_panel_pdb_output import (
 
 
 BIOBLENDER_CLASSES = [
+    # .gui_panel_pdb_import
     bb2_operator_make_preview,
     bb2_operator_import,
     BB2_GUI_PDB_IMPORT,

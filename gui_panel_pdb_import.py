@@ -981,3 +981,6 @@ class BB2_GUI_PDB_IMPORT(bpy.types.Panel):
         else:
             row.active = False
             row.operator("ops.bb2_operator_import", text="Error: Not Ready to Import", icon="X")
+
+
+__all__ = ['bb2_operator_make_preview', 'bb2_operator_import', 'BB2_GUI_PDB_IMPORT']
