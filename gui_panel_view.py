@@ -1,88 +1,14 @@
 import bpy
 from bpy import (types, props)
+from bpy.path import abspath
 
+from .utils import quotedPath
 
+# should all be scene variables
 currentActiveObj = ""
 oldActiveObj = ""
 activeModelRemark = ""
 viewFilterOld = ""
-
-
-class BB2_PANEL_VIEW(types.Panel):
-    bl_label = "BioBlender2 View"
-    bl_idname = "BB2_PANEL_VIEW"
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
-    bl_context = "scene"
-    bl_options = {'DEFAULT_CLOSED'}
-    bpy.types.Scene.BBMLPSolventRadius = bpy.props.FloatProperty(attr="BBMLPSolventRadius", name="Solvent Radius", description="Solvent Radius used for Surface Generation", default=1.4, min=0.2, max=5, soft_min=0.4, soft_max=4)
-    bpy.types.Scene.BBViewFilter = bpy.props.EnumProperty(
-        attr="BBViewFilter", name="View Filter", description="Select a view mode",
-        items=(
-            ("1", "Main Chain", ""),
-            ("2", "+ Side Chain", ""),
-            ("3", "+ Hydrogen", ""),
-            ("4", "Surface", "")),
-        default="3")
-
-    def draw(self, context):
-        scene = context.scene
-        layout = self.layout
-        r = layout.column(align=False)
-        if bpy.context.scene.objects.active:
-            if(bpy.context.scene.objects.active.BBInfo):
-                r.label("Currently Selected Model: " + str(bpy.context.scene.objects.active.name))
-            else:
-                r.label("No model selected")
-            r.alignment = 'LEFT'
-            r.prop(bpy.context.scene.objects.active, "BBInfo", icon="MATERIAL", emboss=False)
-        split = layout.split(percentage=0.5)
-        r = split.row()
-        r.prop(scene, "BBViewFilter", expand=False)
-        split = split.row(align=True)
-        split.prop(scene, "BBMLPSolventRadius")
-        r = layout.row()
-        r.operator("ops.bb2_view_panel_update", text="APPLY")
-
-    @classmethod
-    def poll(cls, context):
-        global tag
-        global currentActiveObj
-        global oldActiveObj
-        try:
-            if bpy.context.scene.objects.active.name:
-                # do a view update when the selected/active obj changes
-                if bpy.context.scene.objects.active.name != oldActiveObj:
-                    # get the ModelRemark of the active model
-                    if bpy.context.scene.objects.active.name:
-                        activeModelRemark = bpy.context.scene.objects.active.name.split("#")[0]
-                        # load previous sessions from cache
-                        # if not modelContainer:
-                        #    # sessionLoad()
-                        #    # print("Sessionload")
-                        currentActiveObj = activeModelRemark
-                    oldActiveObj = bpy.context.scene.objects.active.name
-        except Exception as E:
-            s = "Context Poll Failed: " + str(E)    # VEEEEEERY ANNOYING...
-        return (context)
-
-
-class bb2_view_panel_update(types.Operator):
-    bl_idname = "ops.bb2_view_panel_update"
-    bl_label = "Show Surface"
-    bl_description = "Show Surface model"
-
-    def invoke(self, context, event):
-        print("invoke surface")
-        try:
-            if bpy.context.scene.objects.active:
-                updateView(residue=bpy.context.scene.objects.active)
-        except Exception as E:
-            s = "Generate Surface Failed: " + str(E)
-            print(s)
-            return {'CANCELLED'}
-        else:
-            return{'FINISHED'}
 
 
 # depending on view mode, selectively hide certain object based on atom definition
@@ -109,7 +35,9 @@ def updateView(residue=None, verbose=False):
                         bpy.data.objects[o.name].select = True
                     else:
                         bpy.data.objects[o.name].select = False
+
     # ================================= SURFACES GENERATION - START ==============================
+
     # Check if there are SURFACES in the Scene...
     existingSurfaces = []
     for s in bpy.data.objects:
@@ -144,7 +72,9 @@ def updateView(residue=None, verbose=False):
                     obj.hide = False
                     obj.hide_render = False
         todoAndviewpoints()
+
     # ================================= SURFACES GENERATION - END ==============================
+
     else:
         bpy.data.worlds[0].light_settings.use_environment_light = True
         # hide surface if already exist
@@ -185,117 +115,12 @@ def updateView(residue=None, verbose=False):
             str5 = str(E)   # Do nothing
 
 
-def setup(verbose=False, clear=True, setupPDBid=0):
-    # PDB Path is retrieved from parent EMPTY
-    homePath = bpy.context.scene.bb25_homepath
-
-    pE = None
-    for o1 in bpy.context.scene.objects:
-        try:
-            if(o1.bb2_pdbID == setupPDBid):
-                if(o1.bb2_objectType == "PDBEMPTY"):
-                    pE = copy.copy(o1.name)
-        except Exception as E:
-            str3 = str(E)   # Do not print...
-    print("pE: " + str(pE))
-    PDBPath = abspath(bpy.data.objects[pE].bb2_pdbPath)
-    print("pdppath: " + str(PDBPath))
-
-    if clear:
-        if opSystem == "linux":
-            if os.path.isdir(quotedPath(homePath + "tmp" + os.sep)):
-                shutil.rmtree(quotedPath(homePath + "tmp" + os.sep))
-                os.mkdir(quotedPath(homePath + "tmp" + os.sep))
-            else:
-                os.mkdir(quotedPath(homePath + "tmp" + os.sep))
-        elif opSystem == "darwin":
-            if os.path.isdir(quotedPath(homePath + "tmp" + os.sep)):
-                shutil.rmtree(quotedPath(homePath + "tmp" + os.sep))
-                os.mkdir(quotedPath(homePath + "tmp" + os.sep))
-            else:
-                os.mkdir(quotedPath(homePath + "tmp" + os.sep))
-        else:
-            if os.path.isdir(r"\\?\\" + homePath + "tmp" + os.sep):
-                # shutil.rmtree(r"\\?\\" + homePath+"tmp" + os.sep, ignore_errors=True)
-                # os.mkdir(r"\\?\\" + homePath+"tmp")
-                print("There is a TMP folder!")
-            else:
-                # os.mkdir(r"\\?\\" + homePath+"tmp" + os.sep)
-                print("Trying to making dir on Win (no TMP folder)...")
-                os.mkdir(r"\\?\\" + homePath + "tmp")
-
-    if opSystem == "linux":
-        shutil.copy(PDBPath, quotedPath(homePath + "tmp" + os.sep + "original.pdb"))
-    elif opSystem == "darwin":
-        shutil.copy(PDBPath, quotedPath(homePath + "tmp" + os.sep + "original.pdb"))
-    else:
-        print("Precopy")
-        shutil.copy(r"\\?\\" + PDBPath, r"\\?\\" + homePath + "tmp" + os.sep + "original.pdb")
-
-    print("Exporting PDB...")
-    exportPDB(tag=bpy.data.objects[pE].name.split("#")[0], sPid=setupPDBid)
-
-    # clear zero-user datablocks
-    # try:
-    #   if True:
-    #       for datablock in bpy.data.meshes:
-    #           if datablock.users == 0:
-    #               bpy.data.meshes.remove(datablock)
-    #       for datablock in bpy.data.curves:
-    #               if datablock.users == 0:
-    #                   bpy.data.curves.remove(datablock)
-    #       for datablock in bpy.data.objects:
-    #           if datablock.users == 0:
-    #               bpy.data.objects.remove(datablock)
-    # except Exception as E:
-    #   print("Warning: an error occured in setup while clearing zero-user datablocks")
-    # print("Setup is complete!")
-
-
-# export scene to PDB file; if no path is specified, it writes to tmp.pdb
-def exportPDB(path=None, tag=None, verbose=False, sPid=None):
-    homePath = bpy.context.scene.bb25_homepath
-
-    if not path:
-        path = homePath + "tmp" + os.sep + "tmp.pdb"
-
-    print("=============== exporting PDB")
-    print("Exporting model '%s' to %s" % (tag, path))
-
-    outPath = abspath(path)
-    # Questo e' un singolo PDB, di un singolo MODEL (quello corrente), quindi penso si possa procedere in maniera molto semplice...
-    # if not tag:
-    #   for model in modelContainer:
-    #       tag = model
-    # model = modelContainer[tag]
-    # ordered = sorted(model.keys())
-    print("=======outPath = " + str(outPath))
-    with open(outPath, "w") as outFile:
-        for o in bpy.data.objects:
-            try:
-                if((o.bb2_pdbID == sPid) and (o.bb2_objectType == "ATOM")):
-                    loc = o.location
-                    info = o.BBInfo
-                    x = "%8.3f" % loc[0]
-                    y = "%8.3f" % loc[1]
-                    z = "%8.3f" % loc[2]
-                    # convert line to pdbstring class
-                    line = PDBString(info)
-                    # clear location column
-                    line = line.set(30, "                         ")  # wtf.
-                    # insert new location
-                    line = line.set(30, x)
-                    line = line.set(38, y)
-                    line = line.set(46, z)
-                    outFile.write(line + "\n")
-            except Exception as E:
-                str4 = str(E)   # Do nothing...
-        outFile.write("ENDMDL" + "\n")
-
-
 # Import the surface generated from PyMol
 def surface(sPid=0, optName=""):
-    res = bpy.context.scene.BBMLPSolventRadius
+    scn = bpy.context.scene
+    res = scn.BBMLPSolventRadius
+    homePath = scn.bb25_homepath
+
     quality = "1"
 
     # 2013-06-28 -Trying to fix pdb ending with 1- or 1+...
@@ -372,21 +197,6 @@ def surface(sPid=0, optName=""):
                 print("An error occured while translating and rotating the surface")
     except Exception as E:
         print("An error occured after importing the WRL ShapeIndexedFaceSet in surface")
-
-
-def quotedPath(stringaInput):
-    if stringaInput == "":
-        return stringaInput
-    else:
-        if((stringaInput.startswith("\"")) and (stringaInput.endswith("\""))):
-            return stringaInput
-    if opSystem == "linux":
-        return stringaInput
-    elif opSystem == "darwin":
-        return stringaInput
-    else:
-        stringaOutput = "\"" + stringaInput + "\""
-        return stringaOutput
 
 
 # launch app in separate process, for better performance on multithreaded computers
@@ -473,3 +283,80 @@ def todoAndviewpoints():
                 bpy.ops.object.delete(use_global=False)
     except:
         print("Warning: VIEWPOINTs removing not performed properly...")
+
+
+class bb2_view_panel_update(types.Operator):
+    bl_idname = "ops.bb2_view_panel_update"
+    bl_label = "Show Surface"
+    bl_description = "Show Surface model"
+
+    def invoke(self, context, event):
+        print("invoke surface")
+        try:
+            if bpy.context.scene.objects.active:
+                updateView(residue=bpy.context.scene.objects.active)
+        except Exception as E:
+            s = "Generate Surface Failed: " + str(E)
+            print(s)
+            return {'CANCELLED'}
+        else:
+            return{'FINISHED'}
+
+
+class BB2_PANEL_VIEW(types.Panel):
+    bl_label = "BioBlender2 View"
+    bl_idname = "BB2_PANEL_VIEW"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "scene"
+    bl_options = {'DEFAULT_CLOSED'}
+    bpy.types.Scene.BBMLPSolventRadius = bpy.props.FloatProperty(attr="BBMLPSolventRadius", name="Solvent Radius", description="Solvent Radius used for Surface Generation", default=1.4, min=0.2, max=5, soft_min=0.4, soft_max=4)
+    bpy.types.Scene.BBViewFilter = bpy.props.EnumProperty(
+        attr="BBViewFilter", name="View Filter", description="Select a view mode",
+        items=(
+            ("1", "Main Chain", ""),
+            ("2", "+ Side Chain", ""),
+            ("3", "+ Hydrogen", ""),
+            ("4", "Surface", "")),
+        default="3")
+
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
+        r = layout.column(align=False)
+        if bpy.context.scene.objects.active:
+            if(bpy.context.scene.objects.active.BBInfo):
+                r.label("Currently Selected Model: " + str(bpy.context.scene.objects.active.name))
+            else:
+                r.label("No model selected")
+            r.alignment = 'LEFT'
+            r.prop(bpy.context.scene.objects.active, "BBInfo", icon="MATERIAL", emboss=False)
+        split = layout.split(percentage=0.5)
+        r = split.row()
+        r.prop(scene, "BBViewFilter", expand=False)
+        split = split.row(align=True)
+        split.prop(scene, "BBMLPSolventRadius")
+        r = layout.row()
+        r.operator("ops.bb2_view_panel_update", text="APPLY")
+
+    @classmethod
+    def poll(cls, context):
+        global tag
+        global currentActiveObj
+        global oldActiveObj
+        try:
+            if bpy.context.scene.objects.active.name:
+                # do a view update when the selected/active obj changes
+                if bpy.context.scene.objects.active.name != oldActiveObj:
+                    # get the ModelRemark of the active model
+                    if bpy.context.scene.objects.active.name:
+                        activeModelRemark = bpy.context.scene.objects.active.name.split("#")[0]
+                        # load previous sessions from cache
+                        # if not modelContainer:
+                        #    # sessionLoad()
+                        #    # print("Sessionload")
+                        currentActiveObj = activeModelRemark
+                    oldActiveObj = bpy.context.scene.objects.active.name
+        except Exception as E:
+            s = "Context Poll Failed: " + str(E)
+        return (context)

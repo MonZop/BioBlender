@@ -2,6 +2,7 @@ import sys
 import os
 
 import bpy
+from bpy.path import abspath
 
 
 def file_append(Path, objName, Directory):
@@ -135,3 +136,110 @@ class PDBString(str):
         # insert prop into self[loc], but not changing the length of the string
         newStr = self[0:loc] + str(prop) + self[loc + len(str(prop)):]
         return PDBString(newStr)
+
+
+def quotedPath(stringaInput):
+    opSystem = bpy.context.scene.bb25_opSystem
+
+    if stringaInput == "":
+        return stringaInput
+    else:
+        if((stringaInput.startswith("\"")) and (stringaInput.endswith("\""))):
+            return stringaInput
+
+    if opSystem == "linux":
+        return stringaInput
+    elif opSystem == "darwin":
+        return stringaInput
+    else:
+        stringaOutput = "\"" + stringaInput + "\""
+        return stringaOutput
+
+
+def setup(verbose=False, clear=True, setupPDBid=0):
+    # PDB Path is retrieved from parent EMPTY
+    scn = bpy.context.scene
+    homePath = scn.bb25_homepath
+    opSystem = scn.bb25_opSystem
+
+    pE = None
+    for o1 in scn.objects:
+        try:
+            if(o1.bb2_pdbID == setupPDBid):
+                if(o1.bb2_objectType == "PDBEMPTY"):
+                    pE = copy.copy(o1.name)
+        except Exception as E:
+            str3 = str(E)   # Do not print...
+    print("pE: " + str(pE))
+    PDBPath = abspath(bpy.data.objects[pE].bb2_pdbPath)
+    print("pdppath: " + str(PDBPath))
+
+    if clear:
+        if opSystem == "linux":
+            if os.path.isdir(quotedPath(homePath + "tmp" + os.sep)):
+                shutil.rmtree(quotedPath(homePath + "tmp" + os.sep))
+                os.mkdir(quotedPath(homePath + "tmp" + os.sep))
+            else:
+                os.mkdir(quotedPath(homePath + "tmp" + os.sep))
+        elif opSystem == "darwin":
+            if os.path.isdir(quotedPath(homePath + "tmp" + os.sep)):
+                shutil.rmtree(quotedPath(homePath + "tmp" + os.sep))
+                os.mkdir(quotedPath(homePath + "tmp" + os.sep))
+            else:
+                os.mkdir(quotedPath(homePath + "tmp" + os.sep))
+        else:
+            if os.path.isdir(r"\\?\\" + homePath + "tmp" + os.sep):
+                print("There is a TMP folder!")
+            else:
+                print("Trying to making dir on Win (no TMP folder)...")
+                os.mkdir(r"\\?\\" + homePath + "tmp")
+
+    if opSystem in {"linux", "darwin"}:
+        shutil.copy(PDBPath, quotedPath(homePath + "tmp" + os.sep + "original.pdb"))
+    else:
+        print("Precopy")
+        shutil.copy(r"\\?\\" + PDBPath, r"\\?\\" + homePath + "tmp" + os.sep + "original.pdb")
+
+    print("Exporting PDB...")
+    exportPDB(tag=bpy.data.objects[pE].name.split("#")[0], sPid=setupPDBid)
+
+
+# export scene to PDB file; if no path is specified, it writes to tmp.pdb
+def exportPDB(path=None, tag=None, verbose=False, sPid=None):
+    homePath = bpy.context.scene.bb25_homepath
+
+    if not path:
+        path = homePath + "tmp" + os.sep + "tmp.pdb"
+
+    print("=============== exporting PDB")
+    print("Exporting model '%s' to %s" % (tag, path))
+
+    outPath = abspath(path)
+    # Questo e' un singolo PDB, di un singolo MODEL (quello corrente), quindi penso si possa procedere in maniera molto semplice...
+    # if not tag:
+    #   for model in modelContainer:
+    #       tag = model
+    # model = modelContainer[tag]
+    # ordered = sorted(model.keys())
+    print("=======outPath = " + str(outPath))
+    with open(outPath, "w") as outFile:
+        for o in bpy.data.objects:
+            try:
+                if((o.bb2_pdbID == sPid) and (o.bb2_objectType == "ATOM")):
+                    loc = o.location
+                    info = o.BBInfo
+                    x = "%8.3f" % loc[0]
+                    y = "%8.3f" % loc[1]
+                    z = "%8.3f" % loc[2]
+                    # convert line to pdbstring class
+                    line = PDBString(info)
+                    # clear location column
+                    line = line.set(30, "                         ")  # wtf.
+                    # insert new location
+                    line = line.set(30, x)
+                    line = line.set(38, y)
+                    line = line.set(46, z)
+                    outFile.write(line + "\n")
+            except Exception as E:
+                str4 = str(E)   # Do nothing...
+        outFile.write("ENDMDL" + "\n")

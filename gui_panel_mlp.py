@@ -3,42 +3,57 @@ import copy
 import bpy
 from bpy import (types, props)
 
-from .utils import PDBString
+from .utils import (PDBString, quotedPath)
+from .app_bootsrap import retrieve_fi_materials
+from .app_storage import *
 
-from .app_storage import (
-    pdbIDmodelsDictionary,
-    mainChainCacheDict,
-    mainChainCache_NucleicDict,
-    mainChainCache_Nucleic_FilteredDict,
-    chainCacheDict,
-    chainCache_NucleicDict,
-    pdbIDmodelsDictionary,
-    pdbID
-)
+# (
+#     pdbIDmodelsDictionary,
+#     mainChainCacheDict,
+#     mainChainCache_NucleicDict,
+#     mainChainCache_Nucleic_FilteredDict,
+#     chainCacheDict,
+#     chainCache_NucleicDict,
+#     pdbIDmodelsDictionary,
+#     pdbID
+#     epOBJ
+#     curveCount
+#     dxData
+#     dimension
+#     origin
+#     dxCache
+#     maxCurveSet
+# )
 
 
 def atomicMLP(MLPcolor, tID):
+    materials = bpy.data.materials
+    objects = bpy.data.objects
+
     if MLPcolor:
-        for obj in bpy.data.objects:
+        for obj in objects:
             try:
                 if ((obj.bb2_pdbID == tID) and (obj.bb2_objectType == "ATOM")):
                     aminoName = PDBString(obj.BBInfo).get("aminoName")
                     name = PDBString(obj.BBInfo).get("name")
                     material_this = retrieve_fi_materials(am_name=aminoName, at_name=name)
-                    obj.material_slots[0].material = bpy.data.materials[material_this]
+                    obj.material_slots[0].material = materials[material_this]
+
             except Exception as E:
                 str9 = print(str(E))
         print("Atomic MLP Color set")
     else:
         # Original color
-        for obj in bpy.data.objects:
+        for obj in objects:
             try:
                 if ((obj.bb2_pdbID == tID) and (obj.bb2_objectType == "ATOM")):
                     # In BBInfo, the Atom name is the last string
                     index = obj.BBInfo.split()[-1]
-                    obj.material_slots[0].material = bpy.data.materials[index]
+                    obj.material_slots[0].material = materials[index]
+
             except Exception as E:
                 str10 = print(str(E))
+
         print("Original Atomic Color set")
 
 
@@ -48,12 +63,16 @@ def mlp(tID, force):
     global dxData
     global dimension
     global origin
-    global delta
-    scene = bpy.context.scene
-    formula = bpy.context.scene.BBMLPFormula
-    spacing = bpy.context.scene.BBMLPGridSpacing
+    global delta  # ----------------------- ??????????????????????????? whyere does this come from?
 
+    scene = bpy.context.scene
     scene.render.engine = 'BLENDER_RENDER'
+
+    formula = scene.BBMLPFormula
+    spacing = scene.BBMLPGridSpacing
+    homePath = scene.bb25_homepath
+    opSystem = scene.bb25_opSystem
+    pyPath = scene.bb25_pyPath
 
     def getVar(rawID):
         try:
@@ -123,7 +142,7 @@ def mlp(tID, force):
             command = quotedPath(command)
             launch(exeName=command)
         print("Running PyMLP")
-        global pyPath
+        
         if not pyPath:
             pyPath = "python"
         command = "%s %s -i %s -m %s -s %f -o %s -v" % (quotedPath(pyPath), quotedPath(homePath + "bin" + os.sep + "pyMLP-1.0" + os.sep + "pyMLP.py"), quotedPath(homePath + "tmp" + os.sep + "tmp.pdb"), method, spacing, quotedPath(homePath + "tmp" + os.sep + "tmp.dx"))
