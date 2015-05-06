@@ -3,8 +3,8 @@ import copy
 import bpy
 from bpy import (types, props)
 
-from .utils import (PDBString, quotedPath)
-from .app_bootsrap import retrieve_fi_materials
+from .utils import (PDBString, quotedPath, setup)
+from .app_bootstrap import retrieve_fi_materials
 from .app_storage import *
 
 # (
@@ -142,7 +142,7 @@ def mlp(tID, force):
             command = quotedPath(command)
             launch(exeName=command)
         print("Running PyMLP")
-        
+
         if not pyPath:
             pyPath = "python"
         command = "%s %s -i %s -m %s -s %f -o %s -v" % (quotedPath(pyPath), quotedPath(homePath + "bin" + os.sep + "pyMLP-1.0" + os.sep + "pyMLP.py"), quotedPath(homePath + "tmp" + os.sep + "tmp.pdb"), method, spacing, quotedPath(homePath + "tmp" + os.sep + "tmp.dx"))
