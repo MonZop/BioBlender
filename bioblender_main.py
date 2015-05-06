@@ -9,9 +9,6 @@ am using import * because __all__ is defined explicitely in the modules.
 import bpy
 
 
-# from .gui_panel_pdb_import import (
-#     BB2_GUI_PDB_IMPORT,
-#     bb2_operator_make_preview, bb2_operator_import)
 from .gui_panel_pdb_import import *
 
 from .gui_panel_view import (
@@ -53,7 +50,7 @@ BIOBLENDER_CLASSES = [
     bb2_operator_ep,
     bb2_operator_ep_clear,
     BB2_EP_PANEL,
-    #
+    # .gui_panel_mlp
     bb2_operator_atomic_mlp,
     bb2_operator_mlp,
     bb2_operator_mlp_render,

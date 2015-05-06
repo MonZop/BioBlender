@@ -1,80 +1,20 @@
+import copy
+
 import bpy
 from bpy import (types, props)
 
+from .utils import PDBString
 
-class BB2_MLP_PANEL(types.Panel):
-    bl_label = "BioBlender2 MLP Visualization"
-    bl_idname = "BB2_MLP_PANEL"
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
-    bl_context = "scene"
-    bl_options = {'DEFAULT_CLOSED'}
-    bpy.types.Scene.BBAtomic = bpy.props.EnumProperty(attr="BBAtomic", name="BBAtomic", description="Atomic or Surface MLP", items=(("0", "Atomic", ""), ("1", "Surface", "")), default="0")
-    bpy.types.Scene.BBMLPFormula = bpy.props.EnumProperty(attr="BBMLPFormula", name="Formula", description="Select a formula for MLP calculation", items=(("0", "Dubost", ""), ("1", "Testa", ""), ("2", "Fauchere", ""), ("3", "Brasseur", ""), ("4", "Buckingham", "")), default="1")
-    bpy.types.Scene.BBMLPGridSpacing = bpy.props.FloatProperty(attr="BBMLPGridSpacing", name="Grid Spacing", description="MLP Calculation step size (Smaller is better, but slower)", default=1, min=0.01, max=20, soft_min=1.4, soft_max=10)
-    bpy.types.Scene.BBAtomicMLP = bpy.props.BoolProperty(attr="BBAtomicMLP", name="Atomic MLP", description="Atomic MLP", default=False)
-
-    def draw(self, context):
-        scene = context.scene
-        layout = self.layout
-        r = layout.row()
-        r.prop(scene, "BBAtomic", expand=True)
-        r = layout.row()
-        if(bpy.context.scene.BBAtomic == "0"):
-            r.prop(scene, "BBAtomicMLP")
-            r = layout.row()
-            r.operator("ops.bb2_operator_atomic_mlp")
-        else:
-            split = layout.split()
-            c = split.column()
-            c.prop(scene, "BBMLPFormula")
-            c.prop(scene, "BBMLPGridSpacing")
-            r = split.row()
-            r.scale_y = 2
-            r.operator("ops.bb2_operator_mlp")
-            split = layout.split()
-            r = split.column(align=True)
-            r = split.column()
-            r.scale_y = 2
-            r.operator("ops.bb2_operator_mlp_render")
-
-
-class bb2_operator_atomic_mlp(types.Operator):
-    bl_idname = "ops.bb2_operator_atomic_mlp"
-    bl_label = "Atomic MLP"
-    bl_description = "Atomic MLP"
-
-    def invoke(self, context, event):
-        try:
-            selectedPDBidS = []
-            for b in bpy.context.scene.objects:
-                if b.select:
-                    try:
-                        if(b.bb2_pdbID not in selectedPDBidS):
-                            t = copy.copy(b.bb2_pdbID)
-                            selectedPDBidS.append(t)
-                    except Exception as E:
-                        str1 = str(E)   # Do not print...
-            context.user_preferences.edit.use_global_undo = False
-            for id in selectedPDBidS:
-                bpy.ops.object.select_all(action="DESELECT")
-                for o in bpy.data.objects:
-                    o.select = False
-                for obj in bpy.context.scene.objects:
-                    try:
-                        if obj.bb2_pdbID == id:
-                            obj.select = True
-                    except Exception as E:
-                        str2 = str(E)   # Do not print...
-                tID = copy.copy(id)
-                atomicMLP(bpy.context.scene.BBAtomicMLP, tID)
-            context.user_preferences.edit.use_global_undo = True
-        except Exception as E:
-            s = "Generate MLP visualization Failed: " + str(E)
-            print(s)
-            return {'CANCELLED'}
-        else:
-            return{'FINISHED'}
+from .app_storage import (
+    pdbIDmodelsDictionary,
+    mainChainCacheDict,
+    mainChainCache_NucleicDict,
+    mainChainCache_Nucleic_FilteredDict,
+    chainCacheDict,
+    chainCache_NucleicDict,
+    pdbIDmodelsDictionary,
+    pdbID
+)
 
 
 def atomicMLP(MLPcolor, tID):
@@ -100,79 +40,6 @@ def atomicMLP(MLPcolor, tID):
             except Exception as E:
                 str10 = print(str(E))
         print("Original Atomic Color set")
-
-
-class bb2_operator_mlp(types.Operator):
-    bl_idname = "ops.bb2_operator_mlp"
-    bl_label = "Show MLP on Surface"
-    bl_description = "Calculate Molecular Lipophilicity Potential on surface"
-
-    def invoke(self, context, event):
-        try:
-            bpy.context.user_preferences.edit.use_global_undo = False
-            selectedPDBidS = []
-            for b in bpy.context.scene.objects:
-                if b.select:
-                    try:
-                        if(b.bb2_pdbID not in selectedPDBidS):
-                            t = copy.copy(b.bb2_pdbID)
-                            selectedPDBidS.append(t)
-                    except Exception as E:
-                        str1 = str(E)   # Do not print...
-            context.user_preferences.edit.use_global_undo = False
-            for id in selectedPDBidS:
-                bpy.ops.object.select_all(action="DESELECT")
-                for o in bpy.data.objects:
-                    o.select = False
-                for obj in bpy.context.scene.objects:
-                    try:
-                        if obj.bb2_pdbID == id:
-                            obj.select = True
-                    except Exception as E:
-                        str2 = str(E)   # Do not print...
-                tID = copy.copy(id)
-                mlp(tID, force=True)
-                todoAndviewpoints()
-            bpy.context.scene.BBViewFilter = "4"
-            bpy.context.user_preferences.edit.use_global_undo = True
-        except Exception as E:
-            s = "Generate MLP visualization Failed: " + str(E)
-            print(s)
-            return {'CANCELLED'}
-        else:
-            return{'FINISHED'}
-
-
-class bb2_operator_mlp_render(types.Operator):
-    bl_idname = "ops.bb2_operator_mlp_render"
-    bl_label = "Render MLP to Surface"
-    bl_description = "Visualize Molecular Lipophilicity Potential on surface"
-
-    def invoke(self, context, event):
-        try:
-            context.user_preferences.edit.use_global_undo = False
-            selectedPDBidS = []
-            for b in bpy.context.scene.objects:
-                if b.select:
-                    try:
-                        if((b.bb2_pdbID not in selectedPDBidS) and (b.bb2_objectType == "SURFACE")):
-                            t = copy.copy(b.bb2_pdbID)
-                            selectedPDBidS.append(t)
-                    except Exception as E:
-                        str1 = str(E)   # Do not print...
-            context.user_preferences.edit.use_global_undo = False
-            for id in selectedPDBidS:
-                tID = copy.copy(id)
-                mlpRender(tID)
-                todoAndviewpoints()
-            context.scene.BBViewFilter = "4"
-            context.user_preferences.edit.use_global_undo = True
-        except Exception as E:
-            s = "Generate MLP visualization Failed: " + str(E)
-            print(s)
-            return {'CANCELLED'}
-        else:
-            return{'FINISHED'}
 
 
 # do MLP visualization
@@ -268,7 +135,7 @@ def mlp(tID, force):
 
         wait(p)
 
-        # purge the all old data
+        # purge all the old data
         dxCache = {}
         dxData = []         # list[n] of Potential data
         dimension = []      # list[3] of dx grid store.dimension
@@ -357,25 +224,6 @@ def mlp(tID, force):
         except Exception as E:
             print("Error new color map collection; " + str(E))
 
-        # try:
-        #   ob.data.update(calc_tessface=True)
-        # except Exception as E:
-        #   print("Error in MLP: ob.data.update tessface failed; " + str(E))
-        # try:
-        #   vColor0 = []
-        #   vColor1 = []
-        #   vColor2 = []
-        #   for f in ob.data.tessfaces:
-        #       vColor0.extend(getVar(f.vertices_raw[0]))
-        #       vColor1.extend(getVar(f.vertices_raw[1]))
-        #       vColor2.extend(getVar(f.vertices_raw[2]))
-        #   for i in range(len(ob.data.vertex_colors[0].data)):
-        #       #tmp = ((0.21 * vColor0[i]) + (0.71 * vColor1[i]) + (0.07 * vColor2[i]))
-        #       tmp = (vColor0[i] + vColor1[i] + vColor2[i]) / 3
-        #       ob.data.vertex_colors[0].data[i].color = (tmp, tmp, tmp)
-        # except Exception as E:
-        #   print("Error in MLP: tessfaces vColor extend failed; " + str(E))
-
         try:
             me = ob.data
         except Exception as E:
@@ -430,9 +278,11 @@ def mlpRender(tID):
     bpy.ops.object.select_all(action="DESELECT")
     for o in bpy.data.objects:
         o.select = False
-    bpy.context.scene.objects.active = None
+
+    scene.objects.active = None
     bpy.data.objects[surfaceName].select = True
-    bpy.context.scene.objects.active = bpy.data.objects[surfaceName]
+
+    scene.objects.active = bpy.data.objects[surfaceName]
 
     if not ob:
         raise Exception("No MLP Surface Found, select surface view first")
@@ -604,3 +454,153 @@ def wait(process):
         time.sleep(0.1)
         # needed if io mode is set to subprocess.PIPE to avoid deadlock
         # process.communicate()
+
+
+class bb2_operator_atomic_mlp(types.Operator):
+    bl_idname = "ops.bb2_operator_atomic_mlp"
+    bl_label = "Atomic MLP"
+    bl_description = "Atomic MLP"
+
+    def invoke(self, context, event):
+        try:
+            selectedPDBidS = []
+            for b in bpy.context.scene.objects:
+                if b.select:
+                    try:
+                        if(b.bb2_pdbID not in selectedPDBidS):
+                            t = copy.copy(b.bb2_pdbID)
+                            selectedPDBidS.append(t)
+                    except Exception as E:
+                        str1 = str(E)   # Do not print...
+            context.user_preferences.edit.use_global_undo = False
+            for id in selectedPDBidS:
+                bpy.ops.object.select_all(action="DESELECT")
+                for o in bpy.data.objects:
+                    o.select = False
+                for obj in bpy.context.scene.objects:
+                    try:
+                        if obj.bb2_pdbID == id:
+                            obj.select = True
+                    except Exception as E:
+                        str2 = str(E)   # Do not print...
+                tID = copy.copy(id)
+                atomicMLP(bpy.context.scene.BBAtomicMLP, tID)
+            context.user_preferences.edit.use_global_undo = True
+        except Exception as E:
+            s = "Generate MLP visualization Failed: " + str(E)
+            print(s)
+            return {'CANCELLED'}
+        else:
+            return{'FINISHED'}
+
+
+class bb2_operator_mlp(types.Operator):
+    bl_idname = "ops.bb2_operator_mlp"
+    bl_label = "Show MLP on Surface"
+    bl_description = "Calculate Molecular Lipophilicity Potential on surface"
+
+    def invoke(self, context, event):
+        try:
+            bpy.context.user_preferences.edit.use_global_undo = False
+            selectedPDBidS = []
+            for b in bpy.context.scene.objects:
+                if b.select:
+                    try:
+                        if(b.bb2_pdbID not in selectedPDBidS):
+                            t = copy.copy(b.bb2_pdbID)
+                            selectedPDBidS.append(t)
+                    except Exception as E:
+                        str1 = str(E)   # Do not print...
+            context.user_preferences.edit.use_global_undo = False
+            for id in selectedPDBidS:
+                bpy.ops.object.select_all(action="DESELECT")
+                for o in bpy.data.objects:
+                    o.select = False
+                for obj in bpy.context.scene.objects:
+                    try:
+                        if obj.bb2_pdbID == id:
+                            obj.select = True
+                    except Exception as E:
+                        str2 = str(E)   # Do not print...
+                tID = copy.copy(id)
+                mlp(tID, force=True)
+                todoAndviewpoints()
+            bpy.context.scene.BBViewFilter = "4"
+            bpy.context.user_preferences.edit.use_global_undo = True
+        except Exception as E:
+            s = "Generate MLP visualization Failed: " + str(E)
+            print(s)
+            return {'CANCELLED'}
+        else:
+            return{'FINISHED'}
+
+
+class bb2_operator_mlp_render(types.Operator):
+    bl_idname = "ops.bb2_operator_mlp_render"
+    bl_label = "Render MLP to Surface"
+    bl_description = "Visualize Molecular Lipophilicity Potential on surface"
+
+    def invoke(self, context, event):
+        try:
+            context.user_preferences.edit.use_global_undo = False
+            selectedPDBidS = []
+            for b in bpy.context.scene.objects:
+                if b.select:
+                    try:
+                        if((b.bb2_pdbID not in selectedPDBidS) and (b.bb2_objectType == "SURFACE")):
+                            t = copy.copy(b.bb2_pdbID)
+                            selectedPDBidS.append(t)
+                    except Exception as E:
+                        str1 = str(E)   # Do not print...
+            context.user_preferences.edit.use_global_undo = False
+            for id in selectedPDBidS:
+                tID = copy.copy(id)
+                mlpRender(tID)
+                todoAndviewpoints()
+            context.scene.BBViewFilter = "4"
+            context.user_preferences.edit.use_global_undo = True
+        except Exception as E:
+            s = "Generate MLP visualization Failed: " + str(E)
+            print(s)
+            return {'CANCELLED'}
+        else:
+            return{'FINISHED'}
+
+
+class BB2_MLP_PANEL(types.Panel):
+    bl_label = "BioBlender2 MLP Visualization"
+    bl_idname = "BB2_MLP_PANEL"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "scene"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    types.Scene.BBAtomic = props.EnumProperty(attr="BBAtomic", name="BBAtomic", description="Atomic or Surface MLP", items=(("0", "Atomic", ""), ("1", "Surface", "")), default="0")
+    types.Scene.BBMLPFormula = props.EnumProperty(attr="BBMLPFormula", name="Formula", description="Select a formula for MLP calculation", items=(("0", "Dubost", ""), ("1", "Testa", ""), ("2", "Fauchere", ""), ("3", "Brasseur", ""), ("4", "Buckingham", "")), default="1")
+    types.Scene.BBMLPGridSpacing = props.FloatProperty(attr="BBMLPGridSpacing", name="Grid Spacing", description="MLP Calculation step size (Smaller is better, but slower)", default=1, min=0.01, max=20, soft_min=1.4, soft_max=10)
+    types.Scene.BBAtomicMLP = props.BoolProperty(attr="BBAtomicMLP", name="Atomic MLP", description="Atomic MLP", default=False)
+
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
+
+        r = layout.row()
+        r.prop(scene, "BBAtomic", expand=True)
+        r = layout.row()
+        if(bpy.context.scene.BBAtomic == "0"):
+            r.prop(scene, "BBAtomicMLP")
+            r = layout.row()
+            r.operator("ops.bb2_operator_atomic_mlp")
+        else:
+            split = layout.split()
+            c = split.column()
+            c.prop(scene, "BBMLPFormula")
+            c.prop(scene, "BBMLPGridSpacing")
+            r = split.row()
+            r.scale_y = 2
+            r.operator("ops.bb2_operator_mlp")
+            split = layout.split()
+            r = split.column(align=True)
+            r = split.column()
+            r.scale_y = 2
+            r.operator("ops.bb2_operator_mlp_render")
