@@ -31,11 +31,11 @@ if 'bpy' in globals():
         imp.reload(app_storage)
         imp.reload(app_bootstrap)
 
-        imp.reload(bioblender_main)
         imp.reload(utils)
         imp.reload(operator_lite_pdb_import)
         imp.reload(func_lite_pdb_import)
-        # imp.reload(ui_panels)
+
+        imp.reload(bioblender_main)
         imp.reload(gui_panel_pdb_import)
         imp.reload(gui_panel_view)
         imp.reload(gui_panel_physics_sim)
@@ -51,11 +51,11 @@ else:
     from . import app_storage
     from . import app_bootstrap
 
-    from . import bioblender_main
     from . import utils
     from . import operator_lite_pdb_import
     from . import func_lite_pdb_import
-    # from . import ui_panels
+
+    from . import bioblender_main
     from . import gui_panel_view
     from . import gui_panel_physics_sim
     from . import gui_panel_ep
@@ -65,7 +65,7 @@ else:
 
 
 def register():
-    from bpy.props import (StringProperty, EnumProperty)
+    from bpy.props import (StringProperty, EnumProperty, IntProperty, BoolProperty)
 
     bpy.types.Object.BBInfo = StringProperty()
     bpy.types.Object.bb2_pdbID = StringProperty()
@@ -82,6 +82,9 @@ def register():
     opSystem = utils.detect_os()
     homePath = utils.get_homepath()
     print(opSystem, '\n', homePath)
+
+    bpy.types.Scene.bb25_importReady = BoolProperty(default=False)
+    bpy.types.Scene.bb25_bootstrap = IntProperty(default=-1)
 
     bpy.types.Scene.bb25_opSystem = StringProperty(default=opSystem)
     bpy.types.Scene.bb25_homepath = StringProperty(attr='bb25_homepath', default=homePath)
@@ -111,3 +114,5 @@ def unregister():
     del Scn.bb25_blenderPath
     del Scn.bb25_pyPath
     del Scn.bb25_pyMolPath
+    del scn.bb25_importReady
+    del scn.bb25_bootstrap

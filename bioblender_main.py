@@ -3,23 +3,10 @@ bioblender_main.py
 for license see LICENSE.txt
 
 '''
-import sys
+
 import bpy
 
-# from .utils import (
-#     file_append,
-#     detect_os,
-#     get_homepath,
-#     get_pyPath_pyMolPath)
 
-# from .tables import (
-#     color,
-#     values_fi,
-#     molecules_structure,
-#     scale_vdw, scale_cov,
-#     NucleicAtoms, NucleicAtoms_Filtered)
-
-# from .ui_panels import ImportDisposablePDB
 from .gui_panel_pdb_import import (
     BB2_GUI_PDB_IMPORT,
     bb2_operator_make_preview, bb2_operator_import)

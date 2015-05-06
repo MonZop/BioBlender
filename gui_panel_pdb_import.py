@@ -1,5 +1,6 @@
 import os
 import copy
+from urllib.request import *
 
 import bpy
 from bpy import (types, props)
@@ -34,110 +35,6 @@ from .tables import (
     scale_vdw, scale_cov,
     NucleicAtoms, NucleicAtoms_Filtered)
 
-importReady = False
-bootstrap = -1
-
-
-class BB2_GUI_PDB_IMPORT(bpy.types.Panel):
-    bl_idname = "BB2_GUI_PDB_IMPORT"
-    bl_label = "BioBlender 2 PDB import"
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
-    bl_context = "scene"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    types.Scene.BBDeltaFrame = props.IntProperty(attr="BBDeltaFrame", name="Keyframe Interval", description="The number of in-between frames between each model for animation", default=100, min=1, max=200, soft_min=5, soft_max=50)
-    types.Scene.BBLayerImport = props.BoolVectorProperty(attr="BBLayerImport", size=20, subtype='LAYER', name="Import on Layer", description="Import on Layer")
-    types.Scene.BBImportPath = props.StringProperty(attr="BBImportPath", description="", default="", subtype="FILE_PATH")
-    types.Scene.BBModelRemark = props.StringProperty(attr="BBModelRemark", description="Model name tag for multiple imports", default="protein0")
-    types.Scene.BBImportFeedback = props.StringProperty(attr="BBImportFeedback", description="Import Feedback", default="")
-    types.Scene.BBImportChain = props.StringProperty(attr="BBImportChain", description="Import Chain", default="")
-    types.Scene.BBImportChainOrder = props.StringProperty(attr="BBImportChainOrder", description="List of chains to be imported", default="")
-    types.Scene.BBImportOrder = props.StringProperty(attr="BBImportOrder", description="List of models to be imported", default="")
-    types.Scene.BBImportHydrogen = props.BoolProperty(attr="BBImportHydrogen", name="Import Hydrogen", description="Import hydrogen atoms (Slower)", default=False)
-
-    def draw(self, context):
-        layout = self.layout
-        scene = context.scene
-        split = layout.split(percentage=0.7)
-        split.prop(scene, "BBImportPath", text="")
-        split.operator("ops.bb2_operator_make_preview")
-        row = layout.row()
-        row.prop(scene, "BBModelRemark", text="")
-        row = layout.row()
-        row.prop(scene, "BBImportFeedback", text="", emboss=False)
-        row = layout.row()
-        # left column
-        split = layout.split(percentage=0.7)
-        col = split.column()
-        col.prop(scene, "BBImportOrder", text="")
-        # right column
-        col = split.column()
-        col.prop(scene, "BBDeltaFrame")
-        # next row
-        row = layout.row()
-        row.prop(scene, "BBImportChain", text="", emboss=False)
-        row = layout.row()
-        row.prop(scene, "BBImportChainOrder", text="")
-        row = layout.row()
-        row.prop(scene, "BBLayerImport")
-        row = layout.row()
-        row.prop(scene, "BBImportHydrogen")
-        row = layout.row()
-        row.scale_y = 2
-        if importReady:
-            # row.operator_context = 'INVOKE_REGION_WIN'
-            row.operator("ops.bb2_operator_import")
-        else:
-            row.active = False
-            row.operator("ops.bb2_operator_import", text="Error: Not Ready to Import", icon="X")
-
-
-class bb2_operator_make_preview(types.Operator):
-    bl_idname = "ops.bb2_operator_make_preview"
-    bl_label = "Make Preview"
-    bl_description = "Make Preview"
-
-    def invoke(self, context, event):
-        try:
-            if bootstrap == -1:
-                bootstrapping()  # context)
-
-            global importReady
-            importReady = False
-            bpy.context.scene.BBImportFeedback = ""
-            bpy.context.scene.BBImportChain = ""
-            bpy.context.scene.BBImportOrder = ""
-            bpy.context.scene.BBImportChainOrder = ""
-            importReady = importPreview(retrieved=False)
-            print("Import Ready: " + str(importReady))
-        except Exception as E:
-            s = "Import Failed: " + str(E)
-            print(s)
-            return {'CANCELLED'}
-        else:
-            return{'FINISHED'}
-
-
-class bb2_operator_import(types.Operator):
-    bl_idname = "ops.bb2_operator_import"
-    bl_label = "Import PDB"
-    bl_description = "generate 3D Model"
-
-    def invoke(self, context, event):
-        try:
-            if bootstrap == 0:
-                bootstrap()
-            bpy.context.user_preferences.edit.use_global_undo = False
-            core_importFile()
-            bpy.context.user_preferences.edit.use_global_undo = True
-        except Exception as E:
-            s = "Import Failed: " + str(E)
-            print(s)
-            return {'CANCELLED'}
-        else:
-            return{'FINISHED'}
-
 
 # validate and get the number of models in the BBImportOrder string
 def getNumModel():
@@ -169,7 +66,9 @@ def importPreview(verbose=False, retrieved=False):
         else:
             bpy.context.scene.BBImportFeedback = "Nothing matching this ID found on PDB.org"
             return False
+
     extension = str(bpy.context.scene.BBImportPath).lower().endswith
+
     try:
         # file = open(tmpPreviewFilePath,"r")
         file = open(str(bpy.context.scene.BBImportPath), "r")
@@ -971,3 +870,114 @@ def sessionLoad(verbose=False):
             print("Persistent session loaded")
         except Exception as E:
             print("Warning: Error when loading session cache:", E)
+
+
+#  ------- class defs
+
+
+class bb2_operator_make_preview(types.Operator):
+    bl_idname = "ops.bb2_operator_make_preview"
+    bl_label = "Make Preview"
+    bl_description = "Make Preview"
+
+    def invoke(self, context, event):
+        scn = context.scene
+
+        try:
+            if scn.bb25_bootstrap == -1:
+                bootstrapping()
+
+            scn.bb25_importReady = False
+            scn.BBImportFeedback = ""
+            scn.BBImportChain = ""
+            scn.BBImportOrder = ""
+            scn.BBImportChainOrder = ""
+            scn.bb25_importReady = importPreview(retrieved=False)
+            print("Import Ready:", scn.bb25_importReady)
+
+        except Exception as E:
+            s = "Import Failed: " + str(E)
+            print(s)
+            return {'CANCELLED'}
+
+        else:
+            return{'FINISHED'}
+
+
+class bb2_operator_import(types.Operator):
+    bl_idname = "ops.bb2_operator_import"
+    bl_label = "Import PDB"
+    bl_description = "generate 3D Model"
+
+    def invoke(self, context, event):
+        scn = context.scene
+        try:
+            if scn.bb25_bootstrap == 0:
+                bootstrap()
+
+            edit = bpy.context.user_preferences.edit
+            edit.use_global_undo = False
+            core_importFile()
+            edit.use_global_undo = True
+
+        except Exception as E:
+            s = "Import Failed: " + str(E)
+            print(s)
+            return {'CANCELLED'}
+        else:
+            return{'FINISHED'}
+
+
+class BB2_GUI_PDB_IMPORT(bpy.types.Panel):
+    bl_idname = "BB2_GUI_PDB_IMPORT"
+    bl_label = "BioBlender 2 PDB import"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "scene"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    types.Scene.BBDeltaFrame = props.IntProperty(attr="BBDeltaFrame", name="Keyframe Interval", description="The number of in-between frames between each model for animation", default=100, min=1, max=200, soft_min=5, soft_max=50)
+    types.Scene.BBLayerImport = props.BoolVectorProperty(attr="BBLayerImport", size=20, subtype='LAYER', name="Import on Layer", description="Import on Layer")
+    types.Scene.BBImportPath = props.StringProperty(attr="BBImportPath", description="", default="", subtype="FILE_PATH")
+    types.Scene.BBModelRemark = props.StringProperty(attr="BBModelRemark", description="Model name tag for multiple imports", default="protein0")
+    types.Scene.BBImportFeedback = props.StringProperty(attr="BBImportFeedback", description="Import Feedback", default="")
+    types.Scene.BBImportChain = props.StringProperty(attr="BBImportChain", description="Import Chain", default="")
+    types.Scene.BBImportChainOrder = props.StringProperty(attr="BBImportChainOrder", description="List of chains to be imported", default="")
+    types.Scene.BBImportOrder = props.StringProperty(attr="BBImportOrder", description="List of models to be imported", default="")
+    types.Scene.BBImportHydrogen = props.BoolProperty(attr="BBImportHydrogen", name="Import Hydrogen", description="Import hydrogen atoms (Slower)", default=False)
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        split = layout.split(percentage=0.7)
+        split.prop(scene, "BBImportPath", text="")
+        split.operator("ops.bb2_operator_make_preview")
+        row = layout.row()
+        row.prop(scene, "BBModelRemark", text="")
+        row = layout.row()
+        row.prop(scene, "BBImportFeedback", text="", emboss=False)
+        row = layout.row()
+        # left column
+        split = layout.split(percentage=0.7)
+        col = split.column()
+        col.prop(scene, "BBImportOrder", text="")
+        # right column
+        col = split.column()
+        col.prop(scene, "BBDeltaFrame")
+        # next row
+        row = layout.row()
+        row.prop(scene, "BBImportChain", text="", emboss=False)
+        row = layout.row()
+        row.prop(scene, "BBImportChainOrder", text="")
+        row = layout.row()
+        row.prop(scene, "BBLayerImport")
+        row = layout.row()
+        row.prop(scene, "BBImportHydrogen")
+        row = layout.row()
+        row.scale_y = 2
+        if scene.bb25_importReady:
+            # row.operator_context = 'INVOKE_REGION_WIN'
+            row.operator("ops.bb2_operator_import")
+        else:
+            row.active = False
+            row.operator("ops.bb2_operator_import", text="Error: Not Ready to Import", icon="X")
