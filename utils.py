@@ -1,6 +1,8 @@
 import sys
 import os
 import subprocess
+import copy
+import shutil
 
 import bpy
 from bpy.path import abspath
@@ -119,8 +121,7 @@ class PDBString(str):
             y = float(self[38:46])
             z = float(self[46:54])
             # return [float(coord) for coord in self[30:54].split()]
-            return [x, y, z]
-        # if property == "occupancy": return self[54:60].strip()
+            return [x, y, z]  # if property == "occupancy": return self[54:60].strip()
         if property == "tempFactor":
             return self[60:66].strip()
         if property == "element":
@@ -173,6 +174,9 @@ def setup(verbose=False, clear=True, setupPDBid=0):
                     pE = copy.copy(o1.name)
         except Exception as E:
             str3 = str(E)   # Do not print...
+            print(str3)
+            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+
     print("pE: " + str(pE))
     PDBPath = abspath(bpy.data.objects[pE].bb2_pdbPath)
     print("pdppath: " + str(PDBPath))

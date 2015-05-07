@@ -25,7 +25,6 @@ from .app_storage import (
     chainCacheDict,
     chainCache_NucleicDict,
     pdbIDmodelsDictionary,
-    pdbID
 )
 
 from .tables import (
@@ -179,10 +178,13 @@ def core_importFile():
 
 
 def core_parsePDB(filePath):
+    pdbID = bpy.context.scene.bb25_pdbID
+
     print("core_parse_pdb")
     tmpPDBmodelDictionary = {}      # key: atom name; value: String, the Atom BBInfo; for the CURRENT model
     tmpPDBmodelID = 0
     tmpPDBmodelImportOrder = [int(tmpM) for tmpM in bpy.context.scene.BBImportOrder.split(',')]
+
     global mainChainCacheDict
     global mainChainCache_NucleicDict
     global mainChainCache_Nucleic_FilteredDict
@@ -295,6 +297,8 @@ def core_parsePDB(filePath):
 
 
 def core_parseTXT(filePath):
+    pdbID = bpy.context.scene.bb25_pdbID
+
     tmpPDBmodelDictionary = {}
     global pdbIDmodelsDictionary
     # Parse text files sequence
@@ -371,6 +375,8 @@ def core_sort_hr():
 
 def core_createModels():
     print("core_create_Models")
+    pdbID = bpy.context.scene.bb25_pdbID
+
     # Empty creation
     bpy.ops.object.empty_add(type='PLAIN_AXES')
     bpy.context.scene.objects.active.name = copy.copy(str(bpy.context.scene.BBModelRemark))
@@ -748,6 +754,8 @@ def addRigidBodyRotamer(objectparent, objecttarget):
 
 def core_EmptyChainsCreation():
     print("Empty Chains creation")
+    pdbID = bpy.context.scene.bb25_pdbID
+
     chainsList = []
     for o in bpy.data.objects:
         if(o.bb2_pdbID == pdbID):
@@ -782,6 +790,8 @@ def core_EmptyChainsCreation():
 
 
 def core_cleaningUp():
+    scn = bpy.context.scene
+
     print("cleaning up")
     bpy.context.scene.frame_set(1)
     bpy.ops.object.select_all(action="DESELECT")
@@ -807,9 +817,8 @@ def core_cleaningUp():
         if area.type == 'VIEW_3D':
             area.spaces[0].region_3d.view_perspective = "CAMERA"
 
-    global pdbID
-    pdbID = pdbID + 1  # VERY IMPORTANT!!!
-    print("pdbID: " + str(pdbID))
+    scn.bb25_pdbID += 1  # VERY IMPORTANT!!!
+    print("pdbID: " + str(scn.bb25_pdbID))
 
     sessionSave()
 

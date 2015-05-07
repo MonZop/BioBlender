@@ -1,6 +1,7 @@
 import sys
 import copy
 import shutil
+import os
 
 import bpy
 from bpy import (types, props)
@@ -20,7 +21,7 @@ from .app_storage import *
 #     chainCacheDict,
 #     chainCache_NucleicDict,
 #     pdbIDmodelsDictionary,
-#     pdbID
+
 #     epOBJ
 #     curveCount
 #     dxData
@@ -526,7 +527,7 @@ class bb2_operator_mlp(types.Operator):
 
             selectedPDBidS = []
             for b in bpy.context.scene.objects:
-                if b.select:
+                if (b.select == True):
                     try:
                         if(b.bb2_pdbID not in selectedPDBidS):
                             t = copy.copy(b.bb2_pdbID)

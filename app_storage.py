@@ -9,7 +9,7 @@ projectLastFrame = 1        # Used in multi-pdb context to calculate offset Fram
 
 
 # PDB-MODELS-related variables (no chains-related variables)
-pdbID = 0
+# pdbID = 0
 pdbIDmodelsDictionary = {}  # Key: pdb_ID;  value: a dictionary containing all the models of the current (ID) PDB
 
 
