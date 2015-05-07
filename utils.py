@@ -3,6 +3,7 @@ import os
 import subprocess
 import copy
 import shutil
+import time
 
 import bpy
 from bpy.path import abspath
@@ -213,7 +214,7 @@ def setup(verbose=False, clear=True, setupPDBid=0):
 
 # export scene to PDB file; if no path is specified, it writes to tmp.pdb
 def exportPDB(path=None, tag=None, verbose=False, sPid=None):
-    homePath = bpy.context.scene.bb25_homepath
+    homePath = str(bpy.context.scene.bb25_homepath)
 
     if not path:
         path = homePath + "tmp" + os.sep + "tmp.pdb"
@@ -327,6 +328,7 @@ def surface(sPid=0, optName=""):
     scn = bpy.context.scene
     res = scn.BBMLPSolventRadius
     homePath = scn.bb25_homepath
+    pyMolPath = scn.bb25_pyMolPath
 
     quality = "1"
 
