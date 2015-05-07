@@ -1,9 +1,14 @@
+import sys
 import copy
+import shutil
 
 import bpy
 from bpy import (types, props)
 
-from .utils import (PDBString, quotedPath, setup)
+from .utils import (
+    PDBString, quotedPath, setup, todoAndviewpoints, select,
+    wait, surface, launch)
+
 from .app_bootstrap import retrieve_fi_materials
 from .app_storage import *
 
@@ -73,6 +78,8 @@ def mlp(tID, force):
     homePath = scene.bb25_homepath
     opSystem = scene.bb25_opSystem
     pyPath = scene.bb25_pyPath
+
+    print('arrives here!')
 
     def getVar(rawID):
         try:
@@ -281,10 +288,10 @@ def mlp(tID, force):
 
 def mlpRender(tID):
     print("MLP RENDER Start")
-    scene = bpy.context.scene
-    # Stop if no surface is found
 
+    scene = bpy.context.scene
     scene.render.engine = 'BLENDER_RENDER'
+    opSystem = scene.bb25_opSystem
 
     for obj in bpy.data.objects:
         try:
@@ -303,6 +310,7 @@ def mlpRender(tID):
 
     scene.objects.active = bpy.data.objects[surfaceName]
 
+    # Stop if no surface is found
     if not ob:
         raise Exception("No MLP Surface Found, select surface view first")
 
@@ -467,14 +475,6 @@ def mlpRender(tID):
             obj.hide_render = True
 
 
-# Wait until process finishes
-def wait(process):
-    while process.poll() == None:
-        time.sleep(0.1)
-        # needed if io mode is set to subprocess.PIPE to avoid deadlock
-        # process.communicate()
-
-
 class bb2_operator_atomic_mlp(types.Operator):
     bl_idname = "ops.bb2_operator_atomic_mlp"
     bl_label = "Atomic MLP"
@@ -508,6 +508,7 @@ class bb2_operator_atomic_mlp(types.Operator):
         except Exception as E:
             s = "Generate MLP visualization Failed: " + str(E)
             print(s)
+            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
@@ -520,7 +521,9 @@ class bb2_operator_mlp(types.Operator):
 
     def invoke(self, context, event):
         try:
+
             bpy.context.user_preferences.edit.use_global_undo = False
+
             selectedPDBidS = []
             for b in bpy.context.scene.objects:
                 if b.select:
@@ -530,7 +533,9 @@ class bb2_operator_mlp(types.Operator):
                             selectedPDBidS.append(t)
                     except Exception as E:
                         str1 = str(E)   # Do not print...
+
             context.user_preferences.edit.use_global_undo = False
+
             for id in selectedPDBidS:
                 bpy.ops.object.select_all(action="DESELECT")
                 for o in bpy.data.objects:
@@ -541,14 +546,20 @@ class bb2_operator_mlp(types.Operator):
                             obj.select = True
                     except Exception as E:
                         str2 = str(E)   # Do not print...
+
                 tID = copy.copy(id)
+                print('tID:', tID)
+
                 mlp(tID, force=True)
                 todoAndviewpoints()
+
             bpy.context.scene.BBViewFilter = "4"
             bpy.context.user_preferences.edit.use_global_undo = True
+
         except Exception as E:
             s = "Generate MLP visualization Failed: " + str(E)
             print(s)
+            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
