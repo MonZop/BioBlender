@@ -1,5 +1,14 @@
+import os
+import shutil
+import copy
+
 import bpy
 from bpy import (types, props)
+from bpy.path import abspath
+
+from .app_storage import epOBJ
+from .utils import (
+    launch, wait, todoAndviewpoints, file_append, PDBString, quotedPath)
 
 
 class BB2_EP_PANEL(types.Panel):
@@ -108,6 +117,8 @@ def cleanEPObjs(deletionList=None):
 def scenewideEP(animation):
     global epOBJ
     scene = bpy.context.scene
+    homePath = scene.bb25_homepath
+    opSystem = scene.bb25_opSystem
 
     scenewideSetup()    # In BB1, it was a call to "Setup"; now, Setup is 'per id', so we need a scenewide setup function...
 
@@ -115,7 +126,7 @@ def scenewideEP(animation):
         print("Generating scenewide surface")
         scenewideSurface()
 
-    if (not animation) or (bpy.context.scene.frame_current % 5 == 1):
+    if (not animation) or (scene.frame_current % 5 == 1):
         print("Generating EP Curves")
         tmpPathOpen = homePath + "tmp" + os.sep + "scenewide.pdb"  # former tmp.pdb
 
@@ -134,7 +145,7 @@ def scenewideEP(animation):
                         break
 
         # select the forcefield
-        forcefield = bpy.context.scene.BBForceField
+        forcefield = scene.BBForceField
         if forcefield == "0":
             method = "amber"
         elif forcefield == "1":
@@ -396,8 +407,11 @@ def importEP(path):
     global curveCount
     global objList
 
-    curveCount = 0
     scene = bpy.context.scene
+    homePath = scene.bb25_homepath
+    opSystem = scene.bb25_opSystem
+
+    curveCount = 0
     pts = []
     objList = []
     # read the file once to generate curves
@@ -409,8 +423,8 @@ def importEP(path):
                     # for every n encountered creates a new curve
                     cu = bpy.data.curves.new("Curve%3d" % curveCount, "CURVE")
                     ob = bpy.data.objects.new("CurveObj%3d" % curveCount, cu)
-                    bpy.context.scene.objects.link(ob)
-                    bpy.context.scene.objects.active = ob
+                    scene.objects.link(ob)
+                    scene.objects.active = ob
                     # set all the properties of the curve
                     spline = cu.splines.new("NURBS")
                     cu.dimensions = "3D"
@@ -465,24 +479,15 @@ def importEP(path):
         print("EMITTER in ob: " + ob.name)
         ob.data = mesh
 
-        # 2013-06-27 - Particle Settings End Frame
-        # try:
-        #   bpy.data.particles['ParticleSettings'].frame_end = bpy.context.scene.frame_end
-        #    #bpy.data.particles['ParticleSettings'].frame_end = bpy.context.scene.frame_end
-        #    #lifetime
-        # except Exception as E:
-        #   s = "Emitter Particle System frame_end NOT SET: " + str(E)
-        #   print(s)
-
         # add material if does not exist
         if not ob.data.materials:
             mat = bpy.data.materials["Particles"]
             ob.data.materials.append(mat)
 
         # change particle density according to curve count
-        ob.particle_systems[0].settings.count = int(bpy.context.scene.BBEPNumOfLine * 50000 * bpy.context.scene.BBEPParticleDensity)
-        # reset location
-        # ob.location = [0,0,0]
+        particle_count = scene.BBEPNumOfLine * scene.BBEPParticleDensity * 50000
+        ob.particle_systems[0].settings.count = int(particle_count)
+
         # add object to deletion list
         objList.append(ob)
     return objList
@@ -491,6 +496,7 @@ def importEP(path):
 # Convert WRL to OBJ for scivis.exe
 def exportOBJ(path):
     vertexData = []     # list of list[3] (wrl vertices data)
+
     # read wrl file
     with open(path + ".wrl") as wrl:
         found = False
@@ -526,6 +532,9 @@ def exportOBJ(path):
 
 
 def scenewideSetup():
+    scene = bpy.context.scene
+    homePath = scene.bb25_homepath
+
     path = homePath + "tmp" + os.sep + "scenewide.pdb"
     # Actually, this is a custom "exportPDB" function, without instructions which were present in original "setup" function...
     print("=============== exporting PDB")
@@ -573,7 +582,11 @@ def scenewideSetup():
 
 # Import the surface generated from PyMol
 def scenewideSurface():
-    res = bpy.context.scene.BBMLPSolventRadius
+    scene = bpy.context.scene
+    res = scene.BBMLPSolventRadius
+    homePath = scene.bb25_homepath
+    pyMolPath = scene.bb25_pyMolPath
+
     quality = "1"
 
     # 2013-06-28 -Trying to fix pdb ending with 1- or 1+...
@@ -628,7 +641,7 @@ def scenewideSurface():
         ob.name = "SCENEWIDESURFACE"
         ob.bb2_objectType = "SURFACE"
         ob.select = True
-        bpy.context.scene.objects.active = ob
+        scene.objects.active = ob
 
         bpy.ops.object.editmode_toggle()
         bpy.ops.mesh.remove_doubles(threshold=0.0001, use_unselected=False)

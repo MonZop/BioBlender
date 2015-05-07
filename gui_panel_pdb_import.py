@@ -4,12 +4,9 @@ from urllib.request import *
 
 import bpy
 from bpy import (types, props)
-
+from bpy.path import abspath
 import mathutils
 from mathutils import Vector, Matrix
-
-# import bpy.path
-from bpy.path import abspath
 
 from .utils import (PDBString, file_append)
 from .app_bootstrap import (

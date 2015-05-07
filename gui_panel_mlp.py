@@ -5,6 +5,8 @@ import os
 
 import bpy
 from bpy import (types, props)
+import mathutils
+from mathutils import Color
 
 from .utils import (
     PDBString, quotedPath, setup, todoAndviewpoints, select,
@@ -12,24 +14,6 @@ from .utils import (
 
 from .app_bootstrap import retrieve_fi_materials
 from .app_storage import *
-
-# (
-#     pdbIDmodelsDictionary,
-#     mainChainCacheDict,
-#     mainChainCache_NucleicDict,
-#     mainChainCache_Nucleic_FilteredDict,
-#     chainCacheDict,
-#     chainCache_NucleicDict,
-#     pdbIDmodelsDictionary,
-
-#     epOBJ
-#     curveCount
-#     dxData
-#     dimension
-#     origin
-#     dxCache
-#     maxCurveSet
-# )
 
 
 def atomicMLP(MLPcolor, tID):
@@ -293,6 +277,8 @@ def mlpRender(tID):
     scene = bpy.context.scene
     scene.render.engine = 'BLENDER_RENDER'
     opSystem = scene.bb25_opSystem
+    homePath = scene.bb25_homepath
+    blenderPath = scene.bb25_blenderPath
 
     for obj in bpy.data.objects:
         try:
@@ -527,7 +513,7 @@ class bb2_operator_mlp(types.Operator):
 
             selectedPDBidS = []
             for b in bpy.context.scene.objects:
-                if (b.select == True):
+                if b.select:  # == True):
                     try:
                         if(b.bb2_pdbID not in selectedPDBidS):
                             t = copy.copy(b.bb2_pdbID)

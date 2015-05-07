@@ -25,7 +25,7 @@ import sys
 
 if 'bpy' in globals():
     print(__package__, 'detected reload event')
-    if 'bioblender_main' in globals():
+    if 'app_storage' in globals():
         import imp
 
         imp.reload(app_storage)
@@ -92,7 +92,7 @@ def register():
     bpy.types.Scene.bb25_pyMolPath = StringProperty(default=pyMolPath)
 
     # global reference to the index of a pdb model, each new import is +1
-    # it might be more subtle than that, like a new index per molecule imported, 
+    # it might be more subtle than that, like a new index per molecule imported,
     # but I don't know for certain.
     bpy.types.Scene.bb25_pdbID = IntProperty(default=0)
 
