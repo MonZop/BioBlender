@@ -11,49 +11,43 @@ bl_info = {
     "category": "Add Mesh"
 }
 
-'''
-the following if/else exists only to deal with
-F8 reloads, handy for development, and essential
-for co-existing on a Blender install where F8 is
-used frequently. Not all kinds of code changes can
-be dealt with by this reload strategy, in that case
-the only path is to close/reopen Blender.
-
-'''
+# this is the list of modules, add here if needed.
+bio_files = """\
+app_storage
+app_bootstrap
+utils
+bioblender_main
+gui_panel_pdb_import
+gui_panel_view
+gui_panel_physics_sim
+gui_panel_ep
+gui_panel_mlp
+gui_panel_output_animation
+gui_panel_pdb_output
+"""
 
 import sys
+
+'''
+The following if/else exists only to deal with F8 reloads, and is
+handy for development, and essential even essential for co-existing
+on a Blender install where F8 is used frequently. Not all kinds of
+code changes can be dealt with by this reload strategy, in that case
+the only path is to close/reopen Blender.
+'''
 
 if 'bpy' in globals():
     print(__package__, 'detected reload event')
     if 'app_storage' in globals():
         import imp
-
-        imp.reload(app_storage)
-        imp.reload(app_bootstrap)
-        imp.reload(utils)
-        imp.reload(bioblender_main)
-        imp.reload(gui_panel_pdb_import)
-        imp.reload(gui_panel_view)
-        imp.reload(gui_panel_physics_sim)
-        imp.reload(gui_panel_ep)
-        imp.reload(gui_panel_mlp)
-        imp.reload(gui_panel_output_animation)
-        imp.reload(gui_panel_pdb_output)
-
+        for f in bio_files.split():
+            exec('imp.reload({file})'.format(file=f))
         print('reloaded modules')
 else:
     import bpy
-
-    from . import app_storage
-    from . import app_bootstrap
-    from . import utils
-    from . import bioblender_main
-    from . import gui_panel_view
-    from . import gui_panel_physics_sim
-    from . import gui_panel_ep
-    from . import gui_panel_mlp
-    from . import gui_panel_output_animation
-    from . import gui_panel_pdb_output
+    for f in bio_files.split():
+        exec('from . import {file}'.format(file=f))
+    print('imported bio blender modules.')
 
 
 def register():
@@ -94,7 +88,7 @@ def register():
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    # del any scene props
+    # del any scene or obj props
     Obj = bpy.types.Object
     Scn = bpy.types.Scene
     del Obj.BBInfo
