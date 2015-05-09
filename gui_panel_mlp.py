@@ -53,7 +53,7 @@ def mlp(tID, force):
     global dxData
     global dimension
     global origin
-    global delta  # ----------------------- ??????????????????????????? whyere does this come from?
+    global delta
 
     scene = bpy.context.scene
     scene.render.engine = 'BLENDER_RENDER'
@@ -65,50 +65,6 @@ def mlp(tID, force):
     pyPath = scene.bb25_pyPath
 
     print('arrives here!')
-
-    def getVar(rawID):
-        try:
-            val = dxCache[rawID]
-        except:
-            v = ob.data.vertices[rawID].co
-            dimx = dimension[0]
-            dimy = dimension[1]
-            dimz = dimension[2]
-            deltax = delta[0]
-            deltay = delta[1]
-            deltaz = delta[2]
-            cellx = int((v[0] - origin[0]) / deltax)
-            celly = int((v[1] - origin[1]) / deltay)
-            cellz = int((v[2] - origin[2]) / deltaz)
-            mmm = dxData[cellz + ((celly) * dimz) + ((cellx) * dimz * dimy)]
-            pmm = dxData[cellz + ((celly) * dimz) + ((cellx + 1) * dimz * dimy)]
-            mpm = dxData[cellz + ((celly + 1) * dimz) + ((cellx) * dimz * dimy)]
-            mmp = dxData[cellz + 1 + ((celly) * dimz) + ((cellx) * dimz * dimy)]
-            ppm = dxData[cellz + ((celly + 1) * dimz) + ((cellx + 1) * dimz * dimy)]
-            mpp = dxData[cellz + 1 + ((celly + 1) * dimz) + ((cellx) * dimz * dimy)]
-            pmp = dxData[cellz + 1 + ((celly) * dimz) + ((cellx + 1) * dimz * dimy)]
-            ppp = dxData[cellz + 1 + ((celly + 1) * dimz) + ((cellx + 1) * dimz * dimy)]
-            wxp = 1.0 - (fabs(v[0] - (origin[0] + (deltax * (cellx + 1))))) / deltax
-            wxm = 1.0 - (fabs(v[0] - (origin[0] + (deltax * (cellx))))) / deltax
-            wyp = 1.0 - ((v[1] - (origin[1] + (deltay * (celly + 1))))) / deltay
-            wym = 1.0 - (fabs(v[1] - (origin[1] + (deltay * (celly))))) / deltay
-            wzp = 1.0 - (fabs(v[2] - (origin[2] + (deltaz * (cellz + 1))))) / deltaz
-            wzm = 1.0 - (fabs(v[2] - (origin[2] + (deltaz * (cellz))))) / deltaz
-            onz_xmym = (wzp * mmp) + (wzm * mmm)
-            onz_xpym = (wzp * pmp) + (wzm * pmm)
-            onz_xmyp = (wzp * mpp) + (wzm * mpm)
-            onz_xpyp = (wzp * ppp) + (wzm * ppm)
-            onx_yp = (wxp * onz_xpyp) + (wxm * onz_xmyp)
-            onx_ym = (wxp * onz_xpym) + (wxm * onz_xmym)
-            val = (wyp * onx_yp) + (wym * onx_ym)
-            dxCache[rawID] = val
-
-        # map values
-        if(val >= 0.0):
-            val = (val + 1.0) / 2.0
-        else:
-            val = (val + 3.0) / 6.0
-        return [val, val, val]
 
     if force:
         setup(setupPDBid=tID)

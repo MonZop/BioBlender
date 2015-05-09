@@ -30,11 +30,7 @@ if 'bpy' in globals():
 
         imp.reload(app_storage)
         imp.reload(app_bootstrap)
-
         imp.reload(utils)
-        imp.reload(operator_lite_pdb_import)
-        imp.reload(func_lite_pdb_import)
-
         imp.reload(bioblender_main)
         imp.reload(gui_panel_pdb_import)
         imp.reload(gui_panel_view)
@@ -50,11 +46,7 @@ else:
 
     from . import app_storage
     from . import app_bootstrap
-
     from . import utils
-    from . import operator_lite_pdb_import
-    from . import func_lite_pdb_import
-
     from . import bioblender_main
     from . import gui_panel_view
     from . import gui_panel_physics_sim
@@ -116,6 +108,6 @@ def unregister():
     del Scn.bb25_blenderPath
     del Scn.bb25_pyPath
     del Scn.bb25_pyMolPath
-    del scn.bb25_importReady
-    del scn.bb25_bootstrap
-    del scn.bb25_pdbID
+    del Scn.bb25_importReady
+    del Scn.bb25_bootstrap
+    del Scn.bb25_pdbID
