@@ -411,14 +411,11 @@ def surface(sPid=0, optName=""):
 
 
 def getVar(rawID, local_vars=[]):
-    '''
-    dxCache must be local!
-    # missing many local variables for this to work.
-    '''
+    dimension, delta, origin, dxData, dxCache, ob = local_vars
+
     try:
         val = dxCache[rawID]
     except:
-        dimension, delta, origin, dxData, dxCache, ob = local_vars
 
         v = ob.data.vertices[rawID].co
         dimx = dimension[0]
