@@ -4,6 +4,8 @@ import subprocess
 import copy
 import shutil
 import time
+import math
+from math import fabs
 
 import bpy
 from bpy.path import abspath
@@ -408,8 +410,7 @@ def surface(sPid=0, optName=""):
         print("An error occured after importing the WRL ShapeIndexedFaceSet in surface")
 
 
-# this function was not called anywhere, but it looks useuful.
-def getVar(rawID):
+def getVar(rawID, local_vars=[]):
     '''
     dxCache must be local!
     # missing many local variables for this to work.
@@ -417,6 +418,8 @@ def getVar(rawID):
     try:
         val = dxCache[rawID]
     except:
+        dimension, delta, origin, dxData, dxCache, ob = local_vars
+
         v = ob.data.vertices[rawID].co
         dimx = dimension[0]
         dimy = dimension[1]

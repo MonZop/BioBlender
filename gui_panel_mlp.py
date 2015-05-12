@@ -10,7 +10,7 @@ from mathutils import Color
 
 from .utils import (
     PDBString, quotedPath, setup, todoAndviewpoints, select,
-    wait, surface, launch)
+    wait, surface, launch, getVar)
 
 from .app_bootstrap import retrieve_fi_materials
 from .app_storage import *
@@ -175,16 +175,23 @@ def mlp(tID, force):
             print("Error in MLP: remove doubles and shade smooth failed; " + str(E))
 
         try:
+            # these are mere references, no copying is taking place.
+            local_vars = dimension, delta, origin, dxData, dxCache, ob
+
             color_map_collection = ob.data.vertex_colors
             if len(color_map_collection) == 0:
                 color_map_collection.new()
             color_map = color_map_collection['Col']
             i = 0
-            for poly in ob.data.polygons:
+            mesh = ob.data
+            for poly in mesh.polygons:
                 for idx in poly.loop_indices:
                     # tmp = ((0.21 * color_map.data[i].color[0]) + (0.71 * color_map.data[i].color[1]) + (0.07 * color_map.data[i].color[2]))
-                    tmp = (color_map.data[i].color[0] + color_map.data[i].color[1] + color_map.data[i].color[2]) / 3
-                    color_map.data[i].color = [tmp, tmp, tmp]
+                    # tmp = (color_map.data[i].color[0] + color_map.data[i].color[1] + color_map.data[i].color[2]) / 3
+                    loop = mesh.loops[idx]
+                    rawID = loop.vertex_index
+                    val = getVar(rawID, local_vars)
+                    color_map.data[i].color = val
                     i += 1
 
         except Exception as E:
