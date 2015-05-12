@@ -89,8 +89,8 @@ def mlp(tID, force):
             command = "chmod 755 %s" % (quotedPath(homePath + "bin" + os.sep + "pyMLP-1.0" + os.sep + "pyMLP.py"))
             command = quotedPath(command)
             launch(exeName=command)
-        print("Running PyMLP")
 
+        print("Running PyMLP")
         if not pyPath:
             pyPath = "python"
         command = "%s %s -i %s -m %s -s %f -o %s -v" % (quotedPath(pyPath), quotedPath(homePath + "bin" + os.sep + "pyMLP-1.0" + os.sep + "pyMLP.py"), quotedPath(homePath + "tmp" + os.sep + "tmp.pdb"), method, spacing, quotedPath(homePath + "tmp" + os.sep + "tmp.dx"))
@@ -186,8 +186,7 @@ def mlp(tID, force):
                     tmp = (color_map.data[i].color[0] + color_map.data[i].color[1] + color_map.data[i].color[2]) / 3
                     color_map.data[i].color = [tmp, tmp, tmp]
                     i += 1
-            # color_map_collection['Col'] = color_map
-            # ob.data.vertex_colors = color_map_collection['Col']
+
         except Exception as E:
             print("Error new color map collection; " + str(E))
 
