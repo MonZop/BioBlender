@@ -2,6 +2,7 @@ import sys
 import copy
 import shutil
 import os
+import time
 
 import bpy
 from bpy import (types, props)
@@ -175,6 +176,7 @@ def mlp(tID, force):
             print("Error in MLP: remove doubles and shade smooth failed; " + str(E))
 
         try:
+            time_start = time.time()
             # these are mere references, no copying is taking place.
             local_vars = dimension, delta, origin, dxData, dxCache, ob
 
@@ -185,6 +187,7 @@ def mlp(tID, force):
             i = 0
             mesh = ob.data
             for poly in mesh.polygons:
+                # for idx in poly.loop_indices:
                 for idx in reversed(poly.loop_indices):
                     # tmp = ((0.21 * color_map.data[i].color[0]) + (0.71 * color_map.data[i].color[1]) + (0.07 * color_map.data[i].color[2]))
                     # tmp = (color_map.data[i].color[0] + color_map.data[i].color[1] + color_map.data[i].color[2]) / 3
@@ -193,6 +196,9 @@ def mlp(tID, force):
                     val = getVar(rawID, local_vars)
                     color_map.data[i].color = val
                     i += 1
+
+            time_end = time.time()
+            print('duration vertex col map creation: {0} seconds'.format(time_end - time_start))
 
         except Exception as E:
             print("Error new color map collection; " + str(E))
