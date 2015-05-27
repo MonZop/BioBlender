@@ -332,7 +332,8 @@ def surface(sPid=0, optName=""):
     homePath = scn.bb25_homepath
     pyMolPath = scn.bb25_pyMolPath
 
-    quality = "1"
+    # was 1, could offer user choice...and definitely provide higher for animation purposes.
+    quality = "2"
 
     # 2013-06-28 -Trying to fix pdb ending with 1- or 1+...
     try:
@@ -427,6 +428,7 @@ def getVar(rawID, local_vars=[]):
         cellx = int((v[0] - origin[0]) / deltax)
         celly = int((v[1] - origin[1]) / deltay)
         cellz = int((v[2] - origin[2]) / deltaz)
+
         mmm = dxData[cellz + ((celly) * dimz) + ((cellx) * dimz * dimy)]
         pmm = dxData[cellz + ((celly) * dimz) + ((cellx + 1) * dimz * dimy)]
         mpm = dxData[cellz + ((celly + 1) * dimz) + ((cellx) * dimz * dimy)]
@@ -435,12 +437,14 @@ def getVar(rawID, local_vars=[]):
         mpp = dxData[cellz + 1 + ((celly + 1) * dimz) + ((cellx) * dimz * dimy)]
         pmp = dxData[cellz + 1 + ((celly) * dimz) + ((cellx + 1) * dimz * dimy)]
         ppp = dxData[cellz + 1 + ((celly + 1) * dimz) + ((cellx + 1) * dimz * dimy)]
+
         wxp = 1.0 - (fabs(v[0] - (origin[0] + (deltax * (cellx + 1))))) / deltax
         wxm = 1.0 - (fabs(v[0] - (origin[0] + (deltax * (cellx))))) / deltax
-        wyp = 1.0 - ((v[1] - (origin[1] + (deltay * (celly + 1))))) / deltay
+        wyp = 1.0 - (fabs(v[1] - (origin[1] + (deltay * (celly + 1))))) / deltay
         wym = 1.0 - (fabs(v[1] - (origin[1] + (deltay * (celly))))) / deltay
         wzp = 1.0 - (fabs(v[2] - (origin[2] + (deltaz * (cellz + 1))))) / deltaz
         wzm = 1.0 - (fabs(v[2] - (origin[2] + (deltaz * (cellz))))) / deltaz
+
         onz_xmym = (wzp * mmp) + (wzm * mmm)
         onz_xpym = (wzp * pmp) + (wzm * pmm)
         onz_xmyp = (wzp * mpp) + (wzm * mpm)
