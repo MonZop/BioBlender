@@ -4,7 +4,11 @@ from bpy.path import abspath
 
 from .utils import (
     quotedPath, todoAndviewpoints, select, launch,
-    surface, setup)
+    surface, setup, PDBString)
+
+from .app_bootstrap import (
+    C, N, O, S, H, CA, P, FE, MG, ZN, CU, NA, K, CL, MN, F
+)
 
 # should all be scene variables
 currentActiveObj = ""
