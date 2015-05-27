@@ -332,8 +332,8 @@ def surface(sPid=0, optName=""):
     homePath = scn.bb25_homepath
     pyMolPath = scn.bb25_pyMolPath
 
-    # was 1, could offer user choice...and definitely provide higher for animation purposes.
-    quality = "2"
+    # could offer user choice...and definitely provide higher for animation purposes.
+    quality = "1"
 
     # 2013-06-28 -Trying to fix pdb ending with 1- or 1+...
     try:
