@@ -19,6 +19,8 @@ viewFilterOld = ""
 
 # depending on view mode, selectively hide certain object based on atom definition
 def updateView(residue=None, verbose=False):
+    objects = bpy.data.objects
+
     selectedPDBidS = []
     for b in bpy.context.scene.objects:
         if b.select:
@@ -29,18 +31,23 @@ def updateView(residue=None, verbose=False):
             except Exception as E:
                 str1 = str(E)   # Do not print...
     viewMode = bpy.context.scene.BBViewFilter
+
     # select amino acid by group
     if residue:
         # skip none atomic object
         if residue.BBInfo:
-            seq = PDBString(residue.BBInfo).get("chainSeq")
-            id = PDBString(residue.BBInfo).get("chainID")
-            for o in bpy.data.objects:
-                if(o.BBInfo):
-                    if((PDBString(o.BBInfo).get("chainSeq") == seq) and (PDBString(o.BBInfo).get("chainID") == id)):
-                        bpy.data.objects[o.name].select = True
-                    else:
-                        bpy.data.objects[o.name].select = False
+            residue_info = PDBString(residue.BBInfo)
+            seq = residue_info.get("chainSeq")
+            id = residue_info.get("chainID")
+            for o in objects:
+                if not o.BBInfo:
+                    continue
+
+                bbinfo = PDBString(o.BBInfo)
+                if((bbinfo.get("chainSeq") == seq) and (bbinfo.get("chainID") == id)):
+                    o.select = True
+                else:
+                    o.select = False
 
     # ================================= SURFACES GENERATION - START ==============================
 
@@ -146,9 +153,17 @@ class BB2_PANEL_VIEW(types.Panel):
     bl_region_type = "WINDOW"
     bl_context = "scene"
     bl_options = {'DEFAULT_CLOSED'}
-    bpy.types.Scene.BBMLPSolventRadius = bpy.props.FloatProperty(attr="BBMLPSolventRadius", name="Solvent Radius", description="Solvent Radius used for Surface Generation", default=1.4, min=0.2, max=5, soft_min=0.4, soft_max=4)
+
+    bpy.types.Scene.BBMLPSolventRadius = bpy.props.FloatProperty(
+        attr="BBMLPSolventRadius",
+        name="Solvent Radius",
+        description="Solvent Radius used for Surface Generation",
+        default=1.4, min=0.2, max=5, soft_min=0.4, soft_max=4)
+
     bpy.types.Scene.BBViewFilter = bpy.props.EnumProperty(
-        attr="BBViewFilter", name="View Filter", description="Select a view mode",
+        attr="BBViewFilter",
+        name="View Filter",
+        description="Select a view mode",
         items=(
             ("1", "Main Chain", ""),
             ("2", "+ Side Chain", ""),
