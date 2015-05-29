@@ -1,3 +1,5 @@
+import copy
+
 import bpy
 from bpy import (types, props)
 from bpy.path import abspath
@@ -113,7 +115,13 @@ def updateView(residue=None, verbose=False):
                         obj.hide_render = True
                     # Main Chain Only
                     elif viewMode == "1":
-                        if not (atomName == N or atomName == C or (atomName == CA and elementName != CA) or (atomName in NucleicAtoms) or (atomName in NucleicAtoms_Filtered)):
+                        if not (
+                            # these 4 characteristics must be checked first
+                            atomName in {N, C} or
+                            (atomName == CA and elementName != CA) or
+                            (atomName in NucleicAtoms) or
+                            (atomName in NucleicAtoms_Filtered)
+                        ):
                             obj.hide = True
                             obj.hide_render = True
                     # Main Chain and Side Chain Only
