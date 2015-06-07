@@ -98,10 +98,14 @@ def getNewPDBid():
         for o in bpy.data.objects:
             if(o.bb2_pdbID != ""):
                 found_ids.add(int(o.bb2_pdbID))
-        highest_found_id = max(found_ids)
-        tmp = highest_found_id + 1
-        print('found ids:', found_ids)
-        print('highest found id:', highest_found_id)
+        if found_ids:
+            highest_found_id = max(found_ids)
+            tmp = highest_found_id + 1
+            print('found ids:', found_ids)
+            print('highest found id:', highest_found_id)
+        else:
+            tmp += 1
+
         print('returning new id:', tmp)
 
     else:
