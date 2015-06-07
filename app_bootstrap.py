@@ -85,7 +85,9 @@ def getNewPDBid():
     for o in bpy.data.objects:
         if(o.bb2_pdbID != ""):
             tmp = o.bb2_pdbID
-    tmp = tmp + 1
+
+    tmp = int(tmp) + 1
+
     return tmp
 
 
