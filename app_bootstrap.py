@@ -56,9 +56,8 @@ def bootstrapping():  # context):
             materials[m].diffuse_color = color[m]
     create_fi_materials()
 
-    # get next PDB ID
-    global pdbID
-    pdbID = getNewPDBid()
+    # in case of mulitple models in one scene, +1 current id
+    scene.bb25_pdbID = getNewPDBid()
 
     # EmptySet (Hemi, BBCamera)
     scene.layers[19] = True
@@ -82,11 +81,37 @@ def bootstrapping():  # context):
 def getNewPDBid():
     print("get_new_PDB_id")
     tmp = 0
-    for o in bpy.data.objects:
-        if(o.bb2_pdbID != ""):
-            tmp = o.bb2_pdbID
 
-    tmp = int(tmp) + 1
+    ALTERNATIVE = True
+
+    # I think this function can return a bad index, it assumes
+    # that the last object it iterators towards will have
+    # the highest bb2_pdbID, i'm not confident that that is
+    # always the case.
+
+    if ALTERNATIVE:
+
+        # this could be iterating only over PDB EMPTIES,
+        # instead of every single object.
+        # but for now it does the long way around.
+        found_ids = set()
+        for o in bpy.data.objects:
+            if(o.bb2_pdbID != ""):
+                found_ids.add(int(o.bb2_pdbID))
+        highest_found_id = max(found_ids)
+        tmp = highest_found_id + 1
+        print('found ids:', found_ids)
+        print('highest found id:', highest_found_id)
+        print('returning new id:', tmp)
+
+    else:
+
+        # original function..
+        for o in bpy.data.objects:
+            if(o.bb2_pdbID != ""):
+                tmp = o.bb2_pdbID
+
+        tmp = int(tmp) + 1
 
     return tmp
 
