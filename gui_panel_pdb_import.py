@@ -193,7 +193,7 @@ def core_parsePDB(filePath):
     mainChainCache = []        # a cache to that contains only mainchain atoms
     mainChainCache_Nucleic = []
     mainChainCache_Nucleic_Filtered = []
-    chainCache = {}            # a cache to that contains all non-H atoms
+    chainCache = {}            # a local cache that contains all non-H atoms
     chainCache_Nucleic = {}
 
     pdbIDmodelsDictionary[pdbID] = {}
@@ -384,7 +384,7 @@ def core_createModels():
     bpy.context.scene.objects.active.bb2_pdbPath = copy.copy(str(bpy.context.scene.BBImportPath))
     bpy.data.objects[str(bpy.context.scene.BBModelRemark)].location = ((0.0, 0.0, 0.0))
 
-    global chainCache
+    # global chainCache ...may be redundant
     global curFrame
     id = bpy.context.scene.BBModelRemark
     curFrame = 1
@@ -451,10 +451,8 @@ def core_createModels():
                         # Adding constraints, using atom position to correctly orient hinge x axis
                         obj = bpy.data.objects[entry]
                         nextEntry = bpy.data.objects[mainChainCache[i + 1]]
-                        # line=tmpModel[0][entry]
                         line = tmpModel[entry]
                         obj.location = line.get("loc")
-                        # line=tmpModel[0][mainChainCache[i+1]]
                         line = tmpModel[mainChainCache[i + 1]]
                         nextEntry.location = line.get("loc")
                         addRigidBodyRotamer(obj, nextEntry)
@@ -466,10 +464,8 @@ def core_createModels():
                         # Adding constraints, using atom position to correctly orient hinge x axis
                         obj = bpy.data.objects[entry]
                         nextEntry = bpy.data.objects[mainChainCache_Nucleic_Filtered[i + 1]]
-                        # line=tmpModel[0][entry]
                         line = tmpModel[entry]
                         obj.location = line.get("loc")
-                        # line=tmpModel[0][mainChainCache_Nucleic_Filtered[i+1]]
                         line = tmpModel[mainChainCache_Nucleic_Filtered[i + 1]]
                         nextEntry.location = line.get("loc")
                         addRigidBodyRotamer(obj, nextEntry)
@@ -498,10 +494,8 @@ def core_createModels():
                             print("TargetKey not set, will skip Rigid Body Joint")
                         else:
                             obj = bpy.data.objects[entry[0]]
-                            # line=tmpModel[0][entry[0]]
                             line = tmpModel[entry[0]]
                             obj.location = line.get("loc")
-                            # line=tmpModel[0][targetKey]
                             line = tmpModel[targetKey]
                             nextEntry.location = line.get("loc")
                             addRigidBodyRotamer(obj, bpy.data.objects[targetKey])
