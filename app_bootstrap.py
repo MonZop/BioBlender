@@ -74,8 +74,7 @@ def bootstrapping():  # context):
     except Exception as E:
         raise Exception("Problem in import EmptySet.blend: ", E)
 
-    global bootstrap
-    bootstrap = 2
+    scene.bb25_bootstrap = 2
 
 
 def getNewPDBid():

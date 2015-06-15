@@ -919,7 +919,7 @@ class bb2_operator_import(types.Operator):
         scn = context.scene
         try:
             if scn.bb25_bootstrap == 0:
-                bootstrap()
+                bootstrapping()
 
             edit = bpy.context.user_preferences.edit
             edit.use_global_undo = False
