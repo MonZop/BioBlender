@@ -88,7 +88,7 @@ def register():
     Scn.bb25_currentActiveObj = StringProperty(default="")
     Scn.bb25_oldActiveObj = StringProperty(default="")
     Scn.bb25_activeModelRemark = StringProperty(default="")
-    Scn.bb25_viewFilterOld = StringProperty(default="")
+    Scn.bb25_viewFilterOld = StringProperty(default="")   # <-- unused?
 
     bpy.utils.register_module(__name__)
 

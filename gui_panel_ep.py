@@ -11,89 +11,6 @@ from .utils import (
     launch, wait, todoAndviewpoints, file_append, PDBString, quotedPath)
 
 
-class BB2_EP_PANEL(types.Panel):
-    bl_label = "BioBlender2 EP Visualization"
-    bl_idname = "BB2_EP_PANEL"
-    bl_space_type = "PROPERTIES"
-    bl_region_type = "WINDOW"
-    bl_context = "scene"
-    bl_options = {'DEFAULT_CLOSED'}
-    bpy.types.Scene.BBForceField = bpy.props.EnumProperty(
-        attr="BBForceField", name="ForceField",
-        description="Select a forcefield type for EP calculation",
-        items=(
-            ("0", "amber", ""),
-            ("1", "charmm", ""),
-            ("2", "parse", ""),
-            ("3", "tyl06", ""),
-            ("4", "peoepb", ""),
-            ("5", "swanson", "")),
-        default="0")
-    bpy.types.Scene.BBEPIonConc = bpy.props.FloatProperty(attr="BBEPIonConc", name="Ion concentration", description="Ion concentration of the solvent", default=0.15, min=0.01, max=1, soft_min=0.01, soft_max=1)
-    bpy.types.Scene.BBEPGridStep = bpy.props.FloatProperty(attr="BBEPGridStep", name="Grid Spacing", description="EP Calculation step size (Smaller is better, but slower)", default=1, min=0.01, max=10, soft_min=0.5, soft_max=5)
-    bpy.types.Scene.BBEPMinPot = bpy.props.FloatProperty(attr="BBEPMinPot", name="Minimum Potential", description="Minimum Potential on the surface from which start the calculation of the field lines", default=0.0, min=0.0, max=10000, soft_min=0, soft_max=1000)
-    bpy.types.Scene.BBEPNumOfLine = bpy.props.FloatProperty(attr="BBEPNumOfLine", name="n EP Lines*eV/Å² ", description="Concentration of lines", default=0.05, min=0.01, max=0.5, soft_min=0.01, soft_max=0.1, precision=3, step=0.01)
-    bpy.types.Scene.BBEPParticleDensity = bpy.props.FloatProperty(attr="BBEPParticleDensity", name="Particle Density", description="Particle Density", default=1, min=0.1, max=10.0, soft_min=0.1, soft_max=5.0)
-
-    def draw(self, context):
-        scene = bpy.context.scene
-        layout = self.layout
-        split = layout.split()
-        c = split.column()
-        c.prop(scene, "BBForceField")
-        c = c.column(align=True)
-        c.label("Options:")
-        c.prop(scene, "BBEPIonConc")
-        c.prop(scene, "BBEPGridStep")
-        c.prop(scene, "BBEPMinPot")
-        c.prop(scene, "BBEPNumOfLine")
-        c.prop(scene, "BBEPParticleDensity")
-        c = split.column()
-        c.scale_y = 2
-        c.operator("ops.bb2_operator_ep")
-        c.operator("ops.bb2_operator_ep_clear")
-
-
-class bb2_operator_ep(types.Operator):
-    bl_idname = "ops.bb2_operator_ep"
-    bl_label = "Show EP"
-    bl_description = "Calculate and Visualize Electric Potential"
-
-    def invoke(self, context, event):
-        try:
-            bpy.context.user_preferences.edit.use_global_undo = False
-            cleanEPObjs()
-            scenewideEP(animation=False)
-            bpy.context.scene.BBViewFilter = "4"
-            bpy.context.user_preferences.edit.use_global_undo = True
-            todoAndviewpoints()
-        except Exception as E:
-            s = "Generate EP Visualization Failed: " + str(E)
-            print(s)
-            return {'CANCELLED'}
-        else:
-            return{'FINISHED'}
-
-
-class bb2_operator_ep_clear(types.Operator):
-    bl_idname = "ops.bb2_operator_ep_clear"
-    bl_label = "Clear EP"
-    bl_description = "Clear the EP Visualization"
-
-    def invoke(self, context, event):
-        try:
-            bpy.context.user_preferences.edit.use_global_undo = False
-            cleanEPObjs()
-            bpy.context.user_preferences.edit.use_global_undo = True
-            todoAndviewpoints()
-        except Exception as E:
-            s = "Clear EP Visualization Failed: " + str(E)
-            print(s)
-            return {'CANCELLED'}
-        else:
-            return{'FINISHED'}
-
-
 # delete EP related objects
 def cleanEPObjs(deletionList=None):
     global epOBJ
@@ -657,3 +574,86 @@ def scenewideSurface():
                 print("An error occured while translating and rotating the surface")
     except Exception as E:
         print("An error occured after importing the WRL ShapeIndexedFaceSet in surface")
+
+
+class BB2_EP_PANEL(types.Panel):
+    bl_label = "BioBlender2 EP Visualization"
+    bl_idname = "BB2_EP_PANEL"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "scene"
+    bl_options = {'DEFAULT_CLOSED'}
+    bpy.types.Scene.BBForceField = bpy.props.EnumProperty(
+        attr="BBForceField", name="ForceField",
+        description="Select a forcefield type for EP calculation",
+        items=(
+            ("0", "amber", ""),
+            ("1", "charmm", ""),
+            ("2", "parse", ""),
+            ("3", "tyl06", ""),
+            ("4", "peoepb", ""),
+            ("5", "swanson", "")),
+        default="0")
+    bpy.types.Scene.BBEPIonConc = bpy.props.FloatProperty(attr="BBEPIonConc", name="Ion concentration", description="Ion concentration of the solvent", default=0.15, min=0.01, max=1, soft_min=0.01, soft_max=1)
+    bpy.types.Scene.BBEPGridStep = bpy.props.FloatProperty(attr="BBEPGridStep", name="Grid Spacing", description="EP Calculation step size (Smaller is better, but slower)", default=1, min=0.01, max=10, soft_min=0.5, soft_max=5)
+    bpy.types.Scene.BBEPMinPot = bpy.props.FloatProperty(attr="BBEPMinPot", name="Minimum Potential", description="Minimum Potential on the surface from which start the calculation of the field lines", default=0.0, min=0.0, max=10000, soft_min=0, soft_max=1000)
+    bpy.types.Scene.BBEPNumOfLine = bpy.props.FloatProperty(attr="BBEPNumOfLine", name="n EP Lines*eV/Å² ", description="Concentration of lines", default=0.05, min=0.01, max=0.5, soft_min=0.01, soft_max=0.1, precision=3, step=0.01)
+    bpy.types.Scene.BBEPParticleDensity = bpy.props.FloatProperty(attr="BBEPParticleDensity", name="Particle Density", description="Particle Density", default=1, min=0.1, max=10.0, soft_min=0.1, soft_max=5.0)
+
+    def draw(self, context):
+        scene = bpy.context.scene
+        layout = self.layout
+        split = layout.split()
+        c = split.column()
+        c.prop(scene, "BBForceField")
+        c = c.column(align=True)
+        c.label("Options:")
+        c.prop(scene, "BBEPIonConc")
+        c.prop(scene, "BBEPGridStep")
+        c.prop(scene, "BBEPMinPot")
+        c.prop(scene, "BBEPNumOfLine")
+        c.prop(scene, "BBEPParticleDensity")
+        c = split.column()
+        c.scale_y = 2
+        c.operator("ops.bb2_operator_ep")
+        c.operator("ops.bb2_operator_ep_clear")
+
+
+class bb2_operator_ep(types.Operator):
+    bl_idname = "ops.bb2_operator_ep"
+    bl_label = "Show EP"
+    bl_description = "Calculate and Visualize Electric Potential"
+
+    def invoke(self, context, event):
+        try:
+            bpy.context.user_preferences.edit.use_global_undo = False
+            cleanEPObjs()
+            scenewideEP(animation=False)
+            bpy.context.scene.BBViewFilter = "4"
+            bpy.context.user_preferences.edit.use_global_undo = True
+            todoAndviewpoints()
+        except Exception as E:
+            s = "Generate EP Visualization Failed: " + str(E)
+            print(s)
+            return {'CANCELLED'}
+        else:
+            return{'FINISHED'}
+
+
+class bb2_operator_ep_clear(types.Operator):
+    bl_idname = "ops.bb2_operator_ep_clear"
+    bl_label = "Clear EP"
+    bl_description = "Clear the EP Visualization"
+
+    def invoke(self, context, event):
+        try:
+            bpy.context.user_preferences.edit.use_global_undo = False
+            cleanEPObjs()
+            bpy.context.user_preferences.edit.use_global_undo = True
+            todoAndviewpoints()
+        except Exception as E:
+            s = "Clear EP Visualization Failed: " + str(E)
+            print(s)
+            return {'CANCELLED'}
+        else:
+            return {'FINISHED'}
