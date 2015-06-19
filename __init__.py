@@ -67,20 +67,28 @@ def register():
 
     opSystem = utils.detect_os()
     homePath = utils.get_homepath()
-    bpy.types.Scene.bb25_importReady = BoolProperty(default=False)
-    bpy.types.Scene.bb25_bootstrap = IntProperty(default=-1)
-    bpy.types.Scene.bb25_opSystem = StringProperty(default=opSystem)
-    bpy.types.Scene.bb25_homepath = StringProperty(attr='bb25_homepath', default=homePath)
-    bpy.types.Scene.bb25_blenderPath = StringProperty(default=str(sys.executable))
+
+    Scn = bpy.types.Scene
+    Scn.bb25_importReady = BoolProperty(default=False)
+    Scn.bb25_bootstrap = IntProperty(default=-1)
+    Scn.bb25_opSystem = StringProperty(default=opSystem)
+    Scn.bb25_homepath = StringProperty(attr='bb25_homepath', default=homePath)
+    Scn.bb25_blenderPath = StringProperty(default=str(sys.executable))
 
     pyPath, pyMolPath = utils.get_pyPath_pyMolPath(opSystem)
-    bpy.types.Scene.bb25_pyPath = StringProperty(default=pyPath)
-    bpy.types.Scene.bb25_pyMolPath = StringProperty(default=pyMolPath)
+    Scn.bb25_pyPath = StringProperty(default=pyPath)
+    Scn.bb25_pyMolPath = StringProperty(default=pyMolPath)
 
     # global reference to the index of a pdb model, each new import is +1
     # it might be more subtle than that, like a new index per molecule imported,
     # but I don't know for certain.
-    bpy.types.Scene.bb25_pdbID = IntProperty(default=0)
+    Scn.bb25_pdbID = IntProperty(default=0)
+
+    # Additional, previously simple strings now bound to the scene.
+    Scn.bb25_currentActiveObj = StringProperty(default="")
+    Scn.bb25_oldActiveObj = StringProperty(default="")
+    Scn.bb25_activeModelRemark = StringProperty(default="")
+    Scn.bb25_viewFilterOld = StringProperty(default="")
 
     bpy.utils.register_module(__name__)
 
@@ -105,3 +113,7 @@ def unregister():
     del Scn.bb25_importReady
     del Scn.bb25_bootstrap
     del Scn.bb25_pdbID
+    del Scn.bb25_currentActiveObj
+    del Scn.bb25_oldActiveObj
+    del Scn.bb25_activeModelRemark
+    del Scn.bb25_viewFilterOld

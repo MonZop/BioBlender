@@ -12,12 +12,6 @@ from .app_bootstrap import (
     C, N, O, S, H, CA, P, FE, MG, ZN, CU, NA, K, CL, MN, F
 )
 
-# should all be scene variables
-currentActiveObj = ""
-oldActiveObj = ""
-activeModelRemark = ""
-viewFilterOld = ""
-
 
 # depending on view mode, selectively hide certain object based on atom definition
 def updateView(residue=None, verbose=False):
@@ -200,22 +194,18 @@ class BB2_PANEL_VIEW(types.Panel):
 
     @classmethod
     def poll(cls, context):
-        global tag
-        global currentActiveObj
-        global oldActiveObj
+        scn = context.scene
+
         try:
-            if bpy.context.scene.objects.active.name:
+            active = bpy.context.scene.objects.active
+            if active.name:
                 # do a view update when the selected/active obj changes
-                if bpy.context.scene.objects.active.name != oldActiveObj:
+                if active.name != scn.bb25_oldActiveObj:
                     # get the ModelRemark of the active model
-                    if bpy.context.scene.objects.active.name:
-                        activeModelRemark = bpy.context.scene.objects.active.name.split("#")[0]
-                        # load previous sessions from cache
-                        # if not modelContainer:
-                        #    # sessionLoad()
-                        #    # print("Sessionload")
-                        currentActiveObj = activeModelRemark
-                    oldActiveObj = bpy.context.scene.objects.active.name
+                    if active.name:
+                        scn.bb25_activeModelRemark = active.name.split("#")[0]
+                        scn.bb25_currentActiveObj = scn.bb25_activeModelRemark
+                    scn.bb25_oldActiveObj = active.name
         except Exception as E:
             s = "Context Poll Failed: " + str(E)
         return (context)
