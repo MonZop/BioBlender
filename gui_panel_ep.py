@@ -281,10 +281,16 @@ def scenewideEP(animation):
 
         print("Running Scivis")
         if opSystem == "linux":
-            command = "chmod 755 %s" % (quotedPath(homePath + "bin" + os.sep + "scivis" + os.sep + "SCIVIS.exe"))
+            # command = "chmod 755 %s" % (quotedPath(homePath + "bin" + os.sep + "scivis" + os.sep + "SCIVIS.exe"))
+            # command = quotedPath(command)
+            # launch(exeName=command)
+            # command = "%s %s %s %s %f %f %f %f %f" % (homePath + "bin" + os.sep + "scivis" + os.sep + "SCIVIS.exe", homePath + "tmp" + os.sep + "scenewide.obj", homePath + "tmp" + os.sep + "pot.dx", homePath + "tmp" + os.sep + "tmp.txt", bpy.context.scene.BBEPNumOfLine / 10, bpy.context.scene.BBEPMinPot, 45, 1, 3)
+
+            command = "chmod 755 %s" % (quotedPath(homePath + "scivis_tool" + os.sep + "SCIVIS"))
             command = quotedPath(command)
             launch(exeName=command)
-            command = "%s %s %s %s %f %f %f %f %f" % (homePath + "bin" + os.sep + "scivis" + os.sep + "SCIVIS.exe", homePath + "tmp" + os.sep + "scenewide.obj", homePath + "tmp" + os.sep + "pot.dx", homePath + "tmp" + os.sep + "tmp.txt", bpy.context.scene.BBEPNumOfLine / 10, bpy.context.scene.BBEPMinPot, 45, 1, 3)
+            command = "%s %s %s %s %f %f %f %f %f" % (homePath + "scivis_tool" + os.sep + "SCIVIS", homePath + "tmp" + os.sep + "scenewide.obj", homePath + "tmp" + os.sep + "pot.dx", homePath + "tmp" + os.sep + "tmp.txt", bpy.context.scene.BBEPNumOfLine / 10, bpy.context.scene.BBEPMinPot, 45, 1, 3)
+
         elif opSystem == "darwin":
             command = "chmod 755 %s" % (quotedPath(homePath + "bin" + os.sep + "scivis" + os.sep + "darwin_SCIVIS"))
             command = quotedPath(command)
