@@ -116,9 +116,10 @@ def scenewideEP(animation):
         launch(exeName=command)
 
         print("Running APBS")
+        print('opSystem', opSystem)
         try:
             if opSystem == "linux":
-                shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "apbs.exe"), quotedPath(homePath + "tmp" + os.sep + "apbs.exe"))
+                shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "apbs"), quotedPath(homePath + "tmp" + os.sep + "apbs"))
             elif opSystem == "darwin":
                 shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "darwin_apbs"), quotedPath(homePath + "tmp" + os.sep + "darwin_apbs"))
             else:
@@ -135,10 +136,10 @@ def scenewideEP(animation):
             f = open(oPath, "w")
             f.writelines(lines)
             f.close()
-            command = "chmod 755 %s" % (quotedPath(homePath + "tmp" + os.sep + "apbs.exe"))
+            command = "chmod 755 %s" % (quotedPath(homePath + "tmp" + os.sep + "apbs"))
             command = quotedPath(command)
             launch(exeName=command)
-            command = homePath + "tmp" + os.sep + "apbs.exe" + " " + homePath + "tmp" + os.sep + "scenewide.in"
+            command = homePath + "tmp" + os.sep + "apbs" + " " + homePath + "tmp" + os.sep + "scenewide.in"
         elif opSystem == "darwin":
             oPath = homePath + "tmp" + os.sep + "scenewide.in"
             f = open(oPath, "r")
