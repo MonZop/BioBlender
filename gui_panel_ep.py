@@ -8,7 +8,7 @@ from bpy.path import abspath
 
 from .app_storage import epOBJ, maxCurveSet
 from .utils import (
-    launch, wait,
+    launch, wait, select,
     todoAndviewpoints,
     file_append, PDBString, quotedPath,
     trueSphereOrigin)
