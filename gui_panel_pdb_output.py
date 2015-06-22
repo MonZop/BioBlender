@@ -1,6 +1,8 @@
 import bpy
 from bpy import (types, props)
 
+from .utils import trueSphereOrigin
+
 
 class BB2_PDB_OUTPUT_PANEL(types.Panel):
     bl_label = "BioBlender2 PDB Output"
@@ -66,12 +68,6 @@ class bb2_operator_export_pdb(types.Operator):
             return {'CANCELLED'}
         else:
             return{'FINISHED'}
-
-
-def trueSphereOrigin(object):
-    tmpSphere = bpy.data.objects[object.name]
-    coord = [(object.matrix_world[0])[3], (object.matrix_world[1])[3], (object.matrix_world[2])[3]]
-    return coord
 
 
 def exportPDBSequence(curPDBpath="", tID=0):

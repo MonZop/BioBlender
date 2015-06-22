@@ -6,9 +6,17 @@ import bpy
 from bpy import (types, props)
 from bpy.path import abspath
 
-from .app_storage import epOBJ
+from .app_storage import epOBJ, maxCurveSet
 from .utils import (
-    launch, wait, todoAndviewpoints, file_append, PDBString, quotedPath)
+    launch, wait,
+    todoAndviewpoints,
+    file_append, PDBString, quotedPath,
+    trueSphereOrigin)
+
+from .app_bootstrap import (
+    bootstrapping,
+    C, N, O, S, H, CA, P, FE, MG, ZN, CU, NA, K, CL, MN, F
+)
 
 
 # delete EP related objects

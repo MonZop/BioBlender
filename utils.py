@@ -460,3 +460,9 @@ def getVar(rawID, local_vars=[]):
     else:
         val = (val + 3.0) / 6.0
     return [val, val, val]
+
+
+def trueSphereOrigin(object):
+    # tmpSphere = bpy.data.objects[object.name]
+    coord = [(object.matrix_world[0])[3], (object.matrix_world[1])[3], (object.matrix_world[2])[3]]
+    return coord
