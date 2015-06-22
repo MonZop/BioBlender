@@ -464,5 +464,7 @@ def getVar(rawID, local_vars=[]):
 
 def trueSphereOrigin(object):
     # tmpSphere = bpy.data.objects[object.name]
+
+    # coord = list(object.matrix_world.to_translation()[:3])   # is the same...
     coord = [(object.matrix_world[0])[3], (object.matrix_world[1])[3], (object.matrix_world[2])[3]]
     return coord
