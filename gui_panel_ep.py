@@ -137,7 +137,7 @@ def scenewideEP(animation):
             f = open(oPath, "w")
             f.writelines(lines)
             f.close()
-            # ---------- commenting this out, for am using ubuntu built pacakage apbs, symlinked to /tmp/apbs
+            # ---------- commenting this out, for am using ubuntu built package apbs, symlinked to /tmp/apbs
             # ln -s /usr/bin/apbs <your_path_to>/BioBlender/tmp/apbs
             # command = "chmod 755 %s" % (quotedPath(homePath + "tmp" + os.sep + "apbs"))
             # command = quotedPath(command)
@@ -194,9 +194,24 @@ def scenewideEP(animation):
                 print("user home: ", os.path.expanduser("~"))
                 try:
                     print("BB stays here: ")
-                    homeutente = os.path.expanduser("~")
-                    shutil.move(quotedPath(homeutente + "/.config/blender/2.67/scripts/addons/BioBlender1/bin/pdb2pqr-1.6/pot.dx"), quotedPath(homeutente + "/.config/blender/2.67/scripts/addons/BioBlender1/tmp/pot.dx"))
-                    shutil.move(quotedPath(homeutente + "/.config/blender/2.67/scripts/addons/BioBlender1/bin/pdb2pqr-1.6/io.mc"), quotedPath(homeutente + "/.config/blender/2.67/scripts/addons/BioBlender1/tmp/io.mc"))
+                    # homeutente = os.path.expanduser("~")
+                    # shutil.move(
+                    #    quotedPath(homeutente + "/.config/blender/2.67/scripts/addons/BioBlender1/bin/pdb2pqr-1.6/pot.dx"),
+                    #    quotedPath(homeutente + "/.config/blender/2.67/scripts/addons/BioBlender1/tmp/pot.dx")
+                    # )
+                    # shutil.move(
+                    #    quotedPath(homeutente + "/.config/blender/2.67/scripts/addons/BioBlender1/bin/pdb2pqr-1.6/io.mc"),
+                    #    quotedPath(homeutente + "/.config/blender/2.67/scripts/addons/BioBlender1/tmp/io.mc")
+                    # )
+
+                    orig = quotedPath(homePath + "bin" + os.sep + "pdb2pqr-1.6" + os.sep + "pot.dx")
+                    dest = quotedPath(homePath + "tmp" + os.sep + "pot.dx")
+                    shutil.move(orig, dest)
+
+                    orig = quotedPath(homePath + "bin" + os.sep + "pdb2pqr-1.6" + os.sep + "io.mc")
+                    dest = quotedPath(homePath + "tmp" + os.sep + "io.mc")
+                    shutil.move(orig, dest)
+
                 except Exception as E:
                     s = "pot.dx not found in HOME: " + str(E)
                     print(s)
