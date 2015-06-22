@@ -119,7 +119,8 @@ def scenewideEP(animation):
         print('opSystem', opSystem)
         try:
             if opSystem == "linux":
-                shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "apbs"), quotedPath(homePath + "tmp" + os.sep + "apbs"))
+                # shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "apbs"), quotedPath(homePath + "tmp" + os.sep + "apbs"))
+                ...
             elif opSystem == "darwin":
                 shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "darwin_apbs"), quotedPath(homePath + "tmp" + os.sep + "darwin_apbs"))
             else:
@@ -136,9 +137,11 @@ def scenewideEP(animation):
             f = open(oPath, "w")
             f.writelines(lines)
             f.close()
-            command = "chmod 755 %s" % (quotedPath(homePath + "tmp" + os.sep + "apbs"))
-            command = quotedPath(command)
-            launch(exeName=command)
+            # ---------- commenting this out, for am using ubuntu built pacakage apbs, symlinked to /tmp/apbs
+            # ln -s /usr/bin/apbs <your_path_to>/BioBlender/tmp/apbs
+            # command = "chmod 755 %s" % (quotedPath(homePath + "tmp" + os.sep + "apbs"))
+            # command = quotedPath(command)
+            # launch(exeName=command)
             command = homePath + "tmp" + os.sep + "apbs" + " " + homePath + "tmp" + os.sep + "scenewide.in"
         elif opSystem == "darwin":
             oPath = homePath + "tmp" + os.sep + "scenewide.in"
