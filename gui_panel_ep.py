@@ -120,6 +120,8 @@ def scenewideEP(animation):
         try:
             if opSystem == "linux":
                 # shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "apbs"), quotedPath(homePath + "tmp" + os.sep + "apbs"))
+                # if bin directory contains no apbs, perhaps print a statement about using a symlink and using a linux apbs package
+                # (ie, ubuntu has a pacakge!)
                 ...
             elif opSystem == "darwin":
                 shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "darwin_apbs"), quotedPath(homePath + "tmp" + os.sep + "darwin_apbs"))
@@ -289,7 +291,14 @@ def scenewideEP(animation):
             command = "chmod 755 %s" % (quotedPath(homePath + "scivis_tool" + os.sep + "SCIVIS"))
             command = quotedPath(command)
             launch(exeName=command)
-            command = "%s %s %s %s %f %f %f %f %f" % (homePath + "scivis_tool" + os.sep + "SCIVIS", homePath + "tmp" + os.sep + "scenewide.obj", homePath + "tmp" + os.sep + "pot.dx", homePath + "tmp" + os.sep + "tmp.txt", bpy.context.scene.BBEPNumOfLine / 10, bpy.context.scene.BBEPMinPot, 45, 1, 3)
+            command = "%s %s %s %s %f %f %f %f %f" % (
+                homePath + "scivis_tool" + os.sep + "SCIVIS",
+                homePath + "tmp" + os.sep + "scenewide.obj",
+                homePath + "tmp" + os.sep + "pot.dx",
+                homePath + "tmp" + os.sep + "tmp.txt",
+                bpy.context.scene.BBEPNumOfLine / 10,
+                bpy.context.scene.BBEPMinPot, 45, 1, 3
+            )
 
         elif opSystem == "darwin":
             command = "chmod 755 %s" % (quotedPath(homePath + "bin" + os.sep + "scivis" + os.sep + "darwin_SCIVIS"))

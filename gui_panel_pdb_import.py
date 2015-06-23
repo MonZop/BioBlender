@@ -135,6 +135,10 @@ def importPreview(verbose=False, retrieved=False):
 
 # retrieve PDB from pdb.org
 def pdbdotorg(id):
+    scene = bpy.context.scene
+    homePath = scene.bb25_homepath
+    opSystem = scene.bb25_opSystem
+
     print("pdbdotorg")
     url1 = str("http://www.pdb.org/pdb/files/" + id + ".pdb")
     save1 = str(homePath + "fetched" + os.sep + id + ".pdb")
