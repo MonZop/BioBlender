@@ -119,16 +119,27 @@ def scenewideEP(animation):
         print('opSystem', opSystem)
         try:
             if opSystem == "linux":
+                # #### original code:
                 # shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "apbs"), quotedPath(homePath + "tmp" + os.sep + "apbs"))
+
+                # #### comment about original code, and reason for commenting it out:
                 # if bin directory contains no apbs, perhaps print a statement about using a symlink and using a linux apbs package
                 # (ie, ubuntu has a package!)
-                #     important. below there are two paths, one is there the apbs binary really lives
-                #     the other path is where we want bioblender to find it, we do this via a symbolic link, using the following code:
-                #       ln -s /usr/bin/apbs ~/Desktop/GITHUB/BioBlender/tmp/apbs
-                #     in my case because i'm coding/fixing BioBlender I put this in the above location
-                #     If you use GIT, use the correct path to the BioBlender folder, if not then use something like
-                #       ln -s /usr/bin/apbs quotedPath(homepath + os.sep + 'tmp' + os.sep + 'apbs')
-                ...
+                # important. below there are two paths,
+                #     - one is where the apbs binary really lives
+                #     - the other path is where we want bioblender to find it, we do this via a symbolic link, using the following code:
+                #
+                #            ln -s /usr/bin/apbs ~/Desktop/GITHUB/BioBlender/tmp/apbs
+                #
+                # in my case because i'm coding/fixing BioBlender I put this in the above location
+                # If you use GIT, use the correct path to the BioBlender folder, if not then use something like
+                #
+                #            ln -s /usr/bin/apbs quotedPath(homepath + os.sep + 'tmp' + os.sep + 'apbs')
+                #
+                if not os.path.exists(homePath + "tmp" + os.sep + "apbs"):
+                    command = "ln -s /usr/bin/apbs ~/Desktop/GITHUB/BioBlender/tmp/apbs"
+                    launch(exeName=command)
+
             elif opSystem == "darwin":
                 shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "darwin_apbs"), quotedPath(homePath + "tmp" + os.sep + "darwin_apbs"))
             else:
@@ -145,11 +156,13 @@ def scenewideEP(animation):
             f = open(oPath, "w")
             f.writelines(lines)
             f.close()
-            # ---------- commenting this out, for am using ubuntu built package apbs, symlinked to /tmp/apbs
-            # ln -s /usr/bin/apbs <your_path_to>/BioBlender/tmp/apbs
+
+            # ### original code, commenting this out, because I am using ubuntu's apbs package, symlinked to /tmp/apbs
+            # ### this code sets chmod to allow for the binary to be executed, this is not necessary but will require some
             # command = "chmod 755 %s" % (quotedPath(homePath + "tmp" + os.sep + "apbs"))
             # command = quotedPath(command)
             # launch(exeName=command)
+
             command = homePath + "tmp" + os.sep + "apbs" + " " + homePath + "tmp" + os.sep + "scenewide.in"
         elif opSystem == "darwin":
             oPath = homePath + "tmp" + os.sep + "scenewide.in"
