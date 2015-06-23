@@ -8,7 +8,7 @@ from bpy.path import abspath
 import mathutils
 from mathutils import Vector, Matrix
 
-from .utils import (PDBString, file_append)
+from .utils import (PDBString, file_append, quotedPath)
 from .app_bootstrap import (
     bootstrapping,
     C, N, O, S, H, CA, P, FE, MG, ZN, CU, NA, K, CL, MN, F
