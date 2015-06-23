@@ -395,6 +395,8 @@ def importEP(path):
                     ob.field.type = "GUIDE"
                     ob.field.use_max_distance = True
                     ob.field.distance_max = 0.05
+                    # REDUX  ob.field.guide_minimum = 0.0008
+                    # REDUX  ob.field.distance_max = 0.0008   # originally 0.05
                     # objList keeps a list of all EP related objects for easy deletion
                     objList.append(ob)
                     pts = []
