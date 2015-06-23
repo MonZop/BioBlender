@@ -121,7 +121,13 @@ def scenewideEP(animation):
             if opSystem == "linux":
                 # shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "apbs"), quotedPath(homePath + "tmp" + os.sep + "apbs"))
                 # if bin directory contains no apbs, perhaps print a statement about using a symlink and using a linux apbs package
-                # (ie, ubuntu has a pacakge!)
+                # (ie, ubuntu has a package!)
+                #     important. below there are two paths, one is there the apbs binary really lives
+                #     the other path is where we want bioblender to find it, we do this via a symbolic link, using the following code:
+                #       ln -s /usr/bin/apbs ~/Desktop/GITHUB/BioBlender/tmp/apbs
+                #     in my case because i'm coding/fixing BioBlender I put this in the above location
+                #     If you use GIT, use the correct path to the BioBlender folder, if not then use something like
+                #       ln -s /usr/bin/apbs quotedPath(homepath + os.sep + 'tmp' + os.sep + 'apbs')
                 ...
             elif opSystem == "darwin":
                 shutil.copy(quotedPath(homePath + "bin" + os.sep + "apbs-1.2.1" + os.sep + "darwin_apbs"), quotedPath(homePath + "tmp" + os.sep + "darwin_apbs"))
