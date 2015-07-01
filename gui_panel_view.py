@@ -12,6 +12,8 @@ from .app_bootstrap import (
     C, N, O, S, H, CA, P, FE, MG, ZN, CU, NA, K, CL, MN, F
 )
 
+from .tables import (scale_vdw, scale_cov)
+
 
 # depending on view mode, selectively hide certain object based on atom definition
 def updateView(residue=None, verbose=False):
@@ -128,6 +130,21 @@ def updateView(residue=None, verbose=False):
                         obj.hide_render = True
         except Exception as E:
             str5 = str(E)   # Do nothing
+
+
+class bb2_view_panel_set_radii(types.Operator):
+    bl_idname = "ops.bb2_view_panel_set_radii"
+    bl_label = "Set radii"
+    bl_description = "Show VdW or Cov radii"
+
+    def execute(self, context):
+
+        lookup = scale_vdw if show_type == 'vdw' else scale_cov
+        for obj in objects_of_interest:
+            atom = obj.BBInfo[76:78].strip()
+            s = lookup[atom][0]
+            obj.scale = [s, s, s]    
+
 
 
 class bb2_view_panel_update(types.Operator):
