@@ -173,6 +173,8 @@ class BB2_PANEL_VIEW(types.Panel):
             ("4", "Surface", "")),
         default="3")
 
+    # add here
+
     def draw(self, context):
         scene = context.scene
         layout = self.layout
@@ -191,6 +193,8 @@ class BB2_PANEL_VIEW(types.Panel):
         split.prop(scene, "BBMLPSolventRadius")
         r = layout.row()
         r.operator("ops.bb2_view_panel_update", text="APPLY")
+
+        # add here
 
     @classmethod
     def poll(cls, context):
