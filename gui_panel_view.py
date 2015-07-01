@@ -132,19 +132,36 @@ def updateView(residue=None, verbose=False):
             str5 = str(E)   # Do nothing
 
 
+def get_selected_pdbids():
+    selectedPDBidS = {}
+    for b in bpy.context.scene.objects:
+        if b.select and 1:
+            if(b.bb2_pdbID not in selectedPDBidS):
+                t = copy.copy(b.bb2_pdbID)
+                selectedPDBidS.add(t)
+    return selectedPDBidS
+
+
+def set_radii(caller, context, bbinfo):
+    lookup = scale_vdw if show_type == 'vdw' else scale_cov
+    for obj in objects_of_interest:
+        atom = obj.BBInfo[76:78].strip()
+        s = lookup[atom][0]
+        obj.scale = [s, s, s]    
+
+
+
 class bb2_view_panel_set_radii(types.Operator):
     bl_idname = "ops.bb2_view_panel_set_radii"
     bl_label = "Set radii"
     bl_description = "Show VdW or Cov radii"
 
     def execute(self, context):
+        active = bpy.context.scene.objects.active
+        if active and active.BBInfo:
+            set_radii(caller, context, active.BBInfo)
 
-        lookup = scale_vdw if show_type == 'vdw' else scale_cov
-        for obj in objects_of_interest:
-            atom = obj.BBInfo[76:78].strip()
-            s = lookup[atom][0]
-            obj.scale = [s, s, s]    
-
+        return{'FINISHED'}
 
 
 class bb2_view_panel_update(types.Operator):

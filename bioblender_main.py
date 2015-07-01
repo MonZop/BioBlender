@@ -12,7 +12,7 @@ import bpy
 from .gui_panel_pdb_import import *
 
 from .gui_panel_view import (
-    BB2_PANEL_VIEW, bb2_view_panel_update)
+    BB2_PANEL_VIEW, bb2_view_panel_update, bb2_view_panel_set_radii)
 
 from .gui_panel_physics_sim import (
     BB2_PHYSICS_SIM_PANEL,
@@ -40,6 +40,7 @@ BIOBLENDER_CLASSES = [
     bb2_operator_import,
     BB2_GUI_PDB_IMPORT,
     #
+    bb2_view_panel_set_radii,
     bb2_view_panel_update,
     BB2_PANEL_VIEW,
     #
