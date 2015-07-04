@@ -135,26 +135,36 @@ def updateView(residue=None, verbose=False):
 def get_selected_pdbids():
     selectedPDBidS = {}
     for b in bpy.context.scene.objects:
-        if b.select and 1:
-            if(b.bb2_pdbID not in selectedPDBidS):
+        if b.select and b.bb2_pdbID:
+            if (b.bb2_pdbID not in selectedPDBidS):
                 t = copy.copy(b.bb2_pdbID)
                 selectedPDBidS.add(t)
     return selectedPDBidS
 
 
+def make_object_iterator(selectedPDBidS):
+    for obj in bpy.data.objects:
+        if obj.bb2_objectType == 'ATOM':
+            if obj.bb2_pdbID in selectedPDBidS:
+                yield obj
+
+
 def set_radii(caller, context, bbinfo):
-    lookup = scale_vdw if show_type == 'vdw' else scale_cov
+    lookup = scale_vdw if caller.show_type == 'vdw' else scale_cov
+    objects_of_interest = make_object_iterator(selectedPDBidS)
+
     for obj in objects_of_interest:
         atom = obj.BBInfo[76:78].strip()
         s = lookup[atom][0]
-        obj.scale = [s, s, s]    
-
+        obj.scale = [s, s, s]
 
 
 class bb2_view_panel_set_radii(types.Operator):
     bl_idname = "ops.bb2_view_panel_set_radii"
     bl_label = "Set radii"
     bl_description = "Show VdW or Cov radii"
+
+    show_type = StringProperty()
 
     def execute(self, context):
         active = bpy.context.scene.objects.active
@@ -207,8 +217,6 @@ class BB2_PANEL_VIEW(types.Panel):
             ("4", "Surface", "")),
         default="3")
 
-    # add here
-
     def draw(self, context):
         scene = context.scene
         layout = self.layout
@@ -228,7 +236,14 @@ class BB2_PANEL_VIEW(types.Panel):
         r = layout.row()
         r.operator("ops.bb2_view_panel_update", text="APPLY")
 
-        # add here
+        l = self.layout()
+        col = l.column()
+        col.separator()
+        row = l.row()
+
+        op_name = 'ops.bb2_view_panel_set_radii'
+        row.operator(op_name, text='VdW').show_type = 'vdw'
+        row.operator(op_name, text='covalent').show_type = 'cov'
 
     @classmethod
     def poll(cls, context):
