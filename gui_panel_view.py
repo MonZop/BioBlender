@@ -133,12 +133,12 @@ def updateView(residue=None, verbose=False):
 
 
 def get_selected_pdbids():
-    selectedPDBids = {}
+    selectedPDBids = set()
     for b in bpy.context.scene.objects:
         if b.select and b.bb2_pdbID:
             if (b.bb2_pdbID not in selectedPDBids):
                 t = copy.copy(b.bb2_pdbID)
-                selectedPDBids.update(t)
+                selectedPDBids.add(t)
     return selectedPDBids
 
 
