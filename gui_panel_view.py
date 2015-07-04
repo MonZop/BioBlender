@@ -133,25 +133,27 @@ def updateView(residue=None, verbose=False):
 
 
 def get_selected_pdbids():
-    selectedPDBidS = {}
+    selectedPDBids = {}
     for b in bpy.context.scene.objects:
         if b.select and b.bb2_pdbID:
-            if (b.bb2_pdbID not in selectedPDBidS):
+            if (b.bb2_pdbID not in selectedPDBids):
                 t = copy.copy(b.bb2_pdbID)
-                selectedPDBidS.add(t)
-    return selectedPDBidS
+                selectedPDBids.update(t)
+    return selectedPDBids
 
 
-def make_object_iterator(selectedPDBidS):
+def make_object_iterator(selectedPDBids):
     for obj in bpy.data.objects:
         if obj.bb2_objectType == 'ATOM':
-            if obj.bb2_pdbID in selectedPDBidS:
+            if obj.bb2_pdbID in selectedPDBids:
                 yield obj
 
 
 def set_radii(caller, context, bbinfo):
     lookup = scale_vdw if caller.show_type == 'vdw' else scale_cov
-    objects_of_interest = make_object_iterator(selectedPDBidS)
+
+    selectedPDBids = get_selected_pdbids()
+    objects_of_interest = make_object_iterator(selectedPDBids)
 
     for obj in objects_of_interest:
         atom = obj.BBInfo[76:78].strip()
@@ -164,12 +166,12 @@ class bb2_view_panel_set_radii(types.Operator):
     bl_label = "Set radii"
     bl_description = "Show VdW or Cov radii"
 
-    show_type = StringProperty()
+    show_type = props.StringProperty()
 
     def execute(self, context):
         active = bpy.context.scene.objects.active
         if active and active.BBInfo:
-            set_radii(caller, context, active.BBInfo)
+            set_radii(self, context, active.BBInfo)
 
         return{'FINISHED'}
 
@@ -236,7 +238,7 @@ class BB2_PANEL_VIEW(types.Panel):
         r = layout.row()
         r.operator("ops.bb2_view_panel_update", text="APPLY")
 
-        l = self.layout()
+        l = self.layout
         col = l.column()
         col.separator()
         row = l.row()
