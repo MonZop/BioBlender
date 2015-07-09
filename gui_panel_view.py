@@ -12,7 +12,7 @@ from .app_bootstrap import (
     C, N, O, S, H, CA, P, FE, MG, ZN, CU, NA, K, CL, MN, F
 )
 
-from .tables import (scale_vdw, scale_cov)
+from .tables import atom_properties
 
 
 # depending on view mode, selectively hide certain object based on atom definition
@@ -150,14 +150,14 @@ def make_object_iterator(selectedPDBids):
 
 
 def set_radii(caller, context, bbinfo):
-    lookup = scale_vdw if caller.show_type == 'vdw' else scale_cov
+    idx = 0 if caller.show_type == 'vdw' else 1
 
     selectedPDBids = get_selected_pdbids()
     objects_of_interest = make_object_iterator(selectedPDBids)
 
     for obj in objects_of_interest:
         atom = obj.BBInfo[76:78].strip()
-        s = lookup[atom][0]
+        s = atom_properties[atom][idx]
         obj.scale = [s, s, s]
 
 

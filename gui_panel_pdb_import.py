@@ -25,10 +25,9 @@ from .app_storage import (
 )
 
 from .tables import (
-    color,
+    atom_properties,
     values_fi,
     molecules_structure,
-    scale_vdw, scale_cov,
     NucleicAtoms, NucleicAtoms_Filtered)
 
 
@@ -427,8 +426,9 @@ def core_createModels():
                         index = str(entry[1])[76:78].strip()
                         obj.material_slots[0].material = bpy.data.materials[index]
                         # adjust radius
-                        obj.scale = [scale_cov[index][0], scale_cov[index][0], scale_cov[index][0]]
-                        obj.game.radius = scale_cov[index][1]
+                        s = atom_properties[index][1]
+                        obj.scale = [s, s, s]
+                        obj.game.radius = atom_properties[index][2]
                         # add atom info as RNA string to each object
                         obj.BBInfo = str(entry[1])
                         obj.bb2_pdbID = copy.copy(str(pdbID))

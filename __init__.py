@@ -29,11 +29,15 @@ gui_panel_pdb_output
 import sys
 
 '''
+pep8?  --ignore=E402,E702,E501,E731,E241
+
 The following if/else exists only to deal with F8 reloads, and is
 handy for development, and essential even essential for co-existing
 on a Blender install where F8 is used frequently. Not all kinds of
 code changes can be dealt with by this reload strategy, in that case
 the only path is to close/reopen Blender.
+
+
 '''
 
 if 'bpy' in globals():

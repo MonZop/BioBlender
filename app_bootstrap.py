@@ -2,10 +2,9 @@ import bpy
 import os
 
 from .tables import (
-    color,
+    atom_properties,
     values_fi,
     molecules_structure,
-    scale_vdw, scale_cov,
     NucleicAtoms, NucleicAtoms_Filtered)
 
 from .app_storage import dic_lipo_materials
@@ -48,12 +47,12 @@ def bootstrapping():  # context):
     if not("C" in materials):
         bpy.ops.material.new()
         materials[-1].name = "C"
-        materials["C"].diffuse_color = color[C]
+        materials["C"].diffuse_color = atom_properties[C][3]
     for m in elencoMateriali:
         if not(m in materials):
             materials['C'].copy()
             materials['C.001'].name = m
-            materials[m].diffuse_color = color[m]
+            materials[m].diffuse_color = atom_properties[m][3]
     create_fi_materials()
 
     # in case of mulitple models in one scene, +1 current id
