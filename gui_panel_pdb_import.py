@@ -423,12 +423,12 @@ def core_createModels():
                         entry = modelCopy.popitem()
                         # assign obj name, material, etc.  object Locations are assigned later
                         obj.name = entry[0]
-                        index = str(entry[1])[76:78].strip()
-                        obj.material_slots[0].material = bpy.data.materials[index]
+                        atom_type = str(entry[1])[76:78].strip()
+                        obj.material_slots[0].material = bpy.data.materials[atom_type]
                         # adjust radius
-                        s = atom_properties[index][1]
+                        s = atom_properties[atom_type][1]
                         obj.scale = [s, s, s]
-                        obj.game.radius = atom_properties[index][2]
+                        obj.game.radius = atom_properties[atom_type][2]
                         # add atom info as RNA string to each object
                         obj.BBInfo = str(entry[1])
                         obj.bb2_pdbID = copy.copy(str(pdbID))
