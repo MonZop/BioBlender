@@ -1,0 +1,6 @@
+Hai everyone!
+I am pleased to inform all interested users that we have a new version of BioBlender that can be found on a new Github page, here: https://github.com/PabloEnmanuelRamos/BioBlender2.1
+It has been a major rewriting, to bring it to Python 3, and adapt to new Blender versions.
+The new BB works ok with Blender 2.79, but we are already working to update it and make it available for Bender 2.8 .
+I thank all the people who have worked on it, and especially Pablo, and also those among you who are willing to test, help, and contribute again to make this tool available.
+Go to https://github.com/PabloEnmanuelRamos/BioBlender2.1 and let us know! 
